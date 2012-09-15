@@ -1,0 +1,33 @@
+ASIG	::= ':='
+INUM	::= '\d+'
+FNUM	::= '(\d*\.d+)(E[\+-]?|([1-9]\d*E[\+-]?\d+)'
+STRING	::= '"."'
+ID	::= '[a-zA-Z_][a-zA-Z0-9]_'
+COMEN	::= '/\*(.|\n|\"|\\)*?\*/'
+LT	::= '<'
+LE	::= '<=
+GT	::= '>'
+GE	::= '>='
+EQ	::= '='
+NE	::= '!='
+MAS	::= '+'
+MENOS	::= '-'
+DIV	::= '/'
+MUL	::= '*'
+PARI	::= '('
+PARD	::= ')'
+COMA	::= ','
+DPUN	::= ':'
+CORI	::= '['
+CORD	::= ']'
+PCOMA	::= ';'
+PUN	::= '.'
+
+assing	::= ID := expr
+
+expr	::= expr + expr
+	| expr - expr
+	| expr * expr
+	| expr / expr
+	| (expr)
+	| ID
