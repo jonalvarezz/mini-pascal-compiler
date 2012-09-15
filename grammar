@@ -1,3 +1,6 @@
+lista de todos los tokens
+==========================
+
 ASIG	::= ':='
 INUM	::= '\d+'
 FNUM	::= '(\d*\.d+)(E[\+-]?|([1-9]\d*E[\+-]?\d+)'
@@ -23,11 +26,34 @@ CORD	::= ']'
 PCOMA	::= ';'
 PUN	::= '.'
 
-assing	::= ID := expr
+Gramatica independiente del contexto
+=====================================
 
+assing	 ::= ID := expr
+
+expre    ::= producto '+' producto
+    | producto '-' producto
+    | producto
+    ;
+
+producto ::= producto '*' producto
+    | producto "/" producto
+    | termino
+    | expre
+    ; 
+
+termino  ::= num
+    | - num
+    ;
+
+num      ::= float
+    | int
+    ;
+_______________________________
 expr	::= expr + expr
 	| expr - expr
 	| expr * expr
 	| expr / expr
 	| (expr)
 	| ID
+______________________________
