@@ -13,6 +13,7 @@ import sys
 import ply.lex as lex
 
 debug = False
+conterror = 0
 
 keywords = (
 	'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
@@ -63,6 +64,12 @@ def t_ID(t):
     if t.value in keywords:
         t.type = t.value
     return t
+ 
+ def t_IDM(t):
+     r'[0-9_][a-zA-Z0-9_]*'
+    print("Identificador Mal Formado %s" % t.value[0])
+    t.lexer.skip(1)
+     conterror +=1
 
 # TODO: Manejo de errores
 def t_COMEN(t):
