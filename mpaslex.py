@@ -15,7 +15,7 @@ import ply.lex as lex
 debug = False
 
 keywords = (
-	'INT', 'FLOAT', 'WHILE', 'IF', 'THEN', 'ELSE', 'BEGIN', 'DO', 'END', 'PRINT', 'WRITE', 'READ', 'SKIP', 'RETURN', 'BREAK', 'AND', 'OR', 'NOT', 'FUN', 'ID',
+	'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
 )
 
 tokens = keywords + (
@@ -23,12 +23,6 @@ tokens = keywords + (
 )
 
 t_ignore = ' \t'
-
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9]_'
-    if t.value in keywords:
-        t.type = t.value
-    return t
 
 t_LT = r'\<'
 t_LE = r'<='
@@ -48,18 +42,37 @@ t_CORI = r'\['
 t_CORD = r'\]'
 t_PCOMA = r';'
 t_PUN = r'\.'
-t_ASIG = r':='
+t_ASIG = r'\:='
 
-t_FNUM = r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
-t_STRING = r'\".\"'
+def t_FNUM(t):
+    r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
+    t.value = float(t.value)
+    return t
+
+def t_INUM(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+def t_STRING(t):
+    r'\".*\"'
+    return t
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    if t.value in keywords:
+        t.type = t.value
+    return t
 
 # TODO: Manejo de errores
-t_COMEN = r'/\*(.|\n|\"|\\)*?\*/'
-
-def t_NEWLINE(t):
-    r'\n'
-    t.lexer.lineno += 1
+def t_COMEN(t):
+    r'/\*(.|\n|\"|\\)*?\*/'
     return t
+#    pass
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 
 def t_error(t):
@@ -69,7 +82,7 @@ def t_error(t):
 # Build
 
 if len(sys.argv) > 1:
-    lexer = lex.lex()
+    lexer = lex.lex(debug=1)
     try:
         dato = open(sys.argv[1], "r")
     except IOError as e:
@@ -85,7 +98,7 @@ if len(sys.argv) > 1:
         for tok in lexer:
             print (tok)
 
-        print ( "Numero de lineas: %i" % tok.lexer.lineno )
+        #print ( "Numero de lineas: %i" % tok.lexer.lineno )
 
 else:
     print ("File argument expected. Usage:")

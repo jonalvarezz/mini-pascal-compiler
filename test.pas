@@ -27,5 +27,5 @@ begin
 			i:=i+1
 	end
 	write(v[i]);
-	print("Éxito\n)
+	print("Éxito\n")
 end	
