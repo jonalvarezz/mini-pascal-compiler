@@ -31,20 +31,78 @@ AND 	::= 'and'
 
 Gramatica independiente del contexto
 =====================================
+programa ::= funcion
+          |  programa funcion
+          ;  
 
+funcion ::= FUN ID argumento locales sentencia
+          ;
 
+argumento ::= PARI PARD
+          |   PARI declaracion PARD
+          ;
 
-if ::=  '(' relacion ')' '{' linea '}' else '{' linea '}'
+declaracion ::= ID DPUN type 
+            |   declaracion COMA declaracion
+            |   vacio
+            ;
 
-linea:= expre ';' linea
-     | 
+locales ::= ID DPUN type 
+            |   declaracion PCOMA declaracion
+            ;
+
+sentencia ::= 'begin' lineas 'end'
     ;
 
-relacion ::=  condicion or condicion 
-              | condicion and condicion 
-              | expre condicion expre
+lineas ::= linea 
+       | lineas PCOMA linea
+       ;
+
+linea ::= expre 
+    | write 
+    | read
+    | print 
+    | assing
+    | RETURN expre
+    | ID PARI expre PARD
+    | SKIP 
+    | BREAK
+    | while
+    ;
+
+
+while :== while relacion DO sentencia
+    ; 
+
+if ::= if relacion 'then' sentencia  else  
+    ;
+
+else ::= ELSE sentencia
+      | vacio 
+      ; 
+
+write::= write PARI expre PARD
+     ;
+
+read ::= read PARI location PARD
+     ; 
+
+print ::= print PARI STRING PARD 
+      ;
+
+assing   ::= ID := expre
+            ;
+
+location ::= ID
+         |   ID CORI expre CORD
+        ;
+
+relacion ::=  expre condicion expre 
+         |   relacion AND relacion
+         |   relacion OR relacion
+         |   NOT relacion
+         |   PARI relacion PARD
               ;
-          
 
 condicion ::= LT
     | LE
@@ -54,27 +112,29 @@ condicion ::= LT
     | NE
     ;
 
-expre    ::= producto '+' producto
-    | producto '-' producto
-    | producto
-    | assing
-    | fun
-    ;
 
-assing	 ::= ID := expre
 
-producto ::= producto '*' producto
-    | producto "/" producto
-    | termino
-    | expre
-    ; 
+type    ::= FLOAT
+        | INT
+        | FLOAT CORI expre CORD
+        | INT CORI expre CORD
+        ;
 
-termino  ::= num
-    | - num
-    | ID
-    | 
-    ;
+exprelist ::=  expre COMA exprelist
+            |  expre
+            ;
 
-num      ::= FNUM
-    | INUM
-    ;
+expre   ::= expre  MAS expre 
+        |   expre  MENOS expre
+        |   expre  MUL expre 
+        |   expre  DIV expre  
+        |   MENOS expre 
+        |   MAS   expre   
+        |   ID PARI exprelist PARD
+        |   ID
+        |   ID CORI expre CORD
+        |   INUM
+        |   FNUM
+        |   INT PARI expre PARD
+        |   FLOAR PARI expre PARD 
+        ;
