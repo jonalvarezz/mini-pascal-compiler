@@ -8,6 +8,6 @@ write(v[i]);
 print("Éxito\n")
 while i<n do
 begin
-1i:= 45;
+1i := 45;
 end
 end

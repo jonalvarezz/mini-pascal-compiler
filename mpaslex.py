@@ -13,7 +13,6 @@ import sys
 import ply.lex as lex
 
 debug = False
-conterror = 0
 
 keywords = (
 	'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
@@ -45,8 +44,9 @@ t_PCOMA = r';'
 t_PUN = r'\.'
 t_ASIG = r'\:='
 
+
 def t_FNUM(t):
-    r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
+    r'((\d*\.\d+)(E|e[\+-]?\d+)?|([1-9]\d*E|e[\+-]?\d+))'
     t.value = float(t.value)
     return t
 
@@ -64,14 +64,13 @@ def t_ID(t):
     if t.value in keywords:
         t.type = t.value
     return t
- 
- def t_IDM(t):
-     r'[0-9_][a-zA-Z0-9_]*'
-    print("Identificador Mal Formado %s" % t.value[0])
-    t.lexer.skip(1)
-     conterror +=1
 
 # TODO: Manejo de errores
+def t_error_COMEN(t):
+    r'/\*(.|\n|\"|\\)*?'
+    print ( "ERROR: Comentario no cerrado linea: %s" % t.lineno )
+    t.lexer.skip(1)
+
 def t_COMEN(t):
     r'/\*(.|\n|\"|\\)*?\*/'
     return t
@@ -83,13 +82,13 @@ def t_newline(t):
 
 
 def t_error(t):
-    print("Illegal character %s" % t.value[0])
+    print("ERROR: Caracter no válido %s" % t.value[0])
     t.lexer.skip(1)
 
 # Build
 
 if len(sys.argv) > 1:
-    lexer = lex.lex(debug=1)
+    lexer = lex.lex(debug=0)
     try:
         dato = open(sys.argv[1], "r")
     except IOError as e:
@@ -105,7 +104,7 @@ if len(sys.argv) > 1:
         for tok in lexer:
             print (tok)
 
-        #print ( "Numero de lineas: %i" % tok.lexer.lineno )
+        print ( "\nNumero de lineas Analizadas: %s" % tok.lexer.lineno )
 
 else:
     print ("File argument expected. Usage:")
