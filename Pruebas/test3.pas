@@ -1,13 +1,12 @@
-fun quicksort(l:int, r:int)
-i:int;
-x:int;
-w:int;
-p:float;
-/* turutulo \\ */
-write(v[i]);
-print("Éxito\n")
-while i<n do
-begin
-i:= 45;
-end
-end
+while i<n-1 do
+print("primera vuelta23");
+	begin
+		if 0 < c[n] - c[n-1] then
+		begin
+			print("Quicksort falló");
+			write(i);
+			print("\n");
+		end
+		else
+			i:=i+1
+	end
