@@ -9,7 +9,6 @@
 # Licence:     Free share
 #-----------------------------------------------------------------------------
 
-import sys
 import ply.lex as lex
 
 debug = False
@@ -57,7 +56,7 @@ def t_INUM(t):
 
 def t_error_ID(t):
     r'\d+[a-zA-Z_-]*'
-    print ( "ERROR: Identificador mal formado linea %s" % t.lineno )
+    print ( ">>ERROR: Identificador mal formado linea %s" % t.lineno )
     t.lexer.skip(1)
 
 
@@ -67,15 +66,21 @@ def t_ID(t):
         t.type = t.value
     return t
 
+def t_error_STRING(t):
+    r'\"([^\\\n]|(\\[^\n]))*?\"'
+    print(">>ERROR STRING mal formado linea %s, linea no válida" % t.lineno )
+    t.lexer.skip(1)
+
 def t_STRING(t):
     r'\".*\"'
+    print( t.value)
     return t
 
 
 # TODO: Manejo de errores
 def t_error_COMEN(t):
     r'/\*(.|\n|\"|\\)*?'
-    print ( "ERROR: Comentario no cerrado linea: %s" % t.lineno )
+    print ( ">>ERROR: Comentario mal formado linea %s, linea no válida" % t.lineno )
     t.lexer.skip(1)
 
 def t_COMEN(t):
@@ -89,7 +94,8 @@ def t_newline(t):
 
 
 def t_error(t):
-    print("ERROR: Caracter no válido %s" % t.value[0])
+    print(">>ERROR: Caracter no válido %s" % t.value[0])
+    print(">>>>> linea %s" %  t.lineno)
     t.lexer.skip(1)
 
 # Build
@@ -97,28 +103,9 @@ def t_error(t):
 lexer = lex.lex(debug=0)
 
 if __name__ == '__main__':
-    lex.runmain()
-
-# Forma alterna recibiendo argumentos consola
-# if len(sys.argv) > 1:
-#     lexer = lex.lex(debug=0)
-#     try:
-#         dato = open(sys.argv[1], "r")
-#     except IOError as e:
-#         print ("I/O error({0}): {1}".format(e.errno, e.strerror))
-
-#     else:
-#         if debug : print(dato.read())
-
-#         lexer.input(dato.read())
-#         dato.close()
-
-#         # Tokenize
-#         for tok in lexer:
-#             print (tok)
-
-#         print ( "\nNumero de lineas Analizadas: %s" % tok.lexer.lineno )
-
-# else:
-#     print ("File argument expected. Usage:")
-#     print ("python mpaslex.py <file>")
+    try: 
+        lex.runmain()
+        print( "\n-----------------------" )
+        print( "Analisis completo. Los errores se marcan arriba." )
+    except IOError as e:
+        print ("I/O error({0}): {1}".format(e.errno, e.strerror))
