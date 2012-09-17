@@ -97,28 +97,7 @@ def t_error(t):
 lexer = lex.lex(debug=0)
 
 if __name__ == '__main__':
-    lex.runmain()
-
-# Forma alterna recibiendo argumentos consola
-# if len(sys.argv) > 1:
-#     lexer = lex.lex(debug=0)
-#     try:
-#         dato = open(sys.argv[1], "r")
-#     except IOError as e:
-#         print ("I/O error({0}): {1}".format(e.errno, e.strerror))
-
-#     else:
-#         if debug : print(dato.read())
-
-#         lexer.input(dato.read())
-#         dato.close()
-
-#         # Tokenize
-#         for tok in lexer:
-#             print (tok)
-
-#         print ( "\nNumero de lineas Analizadas: %s" % tok.lexer.lineno )
-
-# else:
-#     print ("File argument expected. Usage:")
-#     print ("python mpaslex.py <file>")
+    try: 
+        lex.runmain()
+    except IOError as e:
+        print ("I/O error({0}): {1}".format(e.errno, e.strerror))
