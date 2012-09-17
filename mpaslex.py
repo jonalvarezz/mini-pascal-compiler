@@ -51,19 +51,26 @@ def t_FNUM(t):
     return t
 
 def t_INUM(t):
-    r'\d+'
+    r'[0-9]+[^a-zA-Z_]'
     t.value = int(t.value)
+    return t
+
+def t_error_ID(t):
+    r'\d+[a-zA-Z_-]*'
+    print ( "ERROR: Identificador mal formado linea %s" % t.lineno )
+    t.lexer.skip(1)
+
+
+def t_ID(t):
+    r'[a-zA-Z_-][a-zA-Z0-9_-]*'
+    if t.value in keywords:
+        t.type = t.value
     return t
 
 def t_STRING(t):
     r'\".*\"'
     return t
 
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value in keywords:
-        t.type = t.value
-    return t
 
 # TODO: Manejo de errores
 def t_error_COMEN(t):
@@ -87,25 +94,31 @@ def t_error(t):
 
 # Build
 
-if len(sys.argv) > 1:
-    lexer = lex.lex(debug=0)
-    try:
-        dato = open(sys.argv[1], "r")
-    except IOError as e:
-        print ("I/O error({0}): {1}".format(e.errno, e.strerror))
+lexer = lex.lex(debug=0)
 
-    else:
-        if debug : print(dato.read())
+if __name__ == '__main__':
+    lex.runmain()
 
-        lexer.input(dato.read())
-        dato.close()
+# Forma alterna recibiendo argumentos consola
+# if len(sys.argv) > 1:
+#     lexer = lex.lex(debug=0)
+#     try:
+#         dato = open(sys.argv[1], "r")
+#     except IOError as e:
+#         print ("I/O error({0}): {1}".format(e.errno, e.strerror))
 
-        # Tokenize
-        for tok in lexer:
-            print (tok)
+#     else:
+#         if debug : print(dato.read())
 
-        print ( "\nNumero de lineas Analizadas: %s" % tok.lexer.lineno )
+#         lexer.input(dato.read())
+#         dato.close()
 
-else:
-    print ("File argument expected. Usage:")
-    print ("python mpaslex.py <file>")
+#         # Tokenize
+#         for tok in lexer:
+#             print (tok)
+
+#         print ( "\nNumero de lineas Analizadas: %s" % tok.lexer.lineno )
+
+# else:
+#     print ("File argument expected. Usage:")
+#     print ("python mpaslex.py <file>")
