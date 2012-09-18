@@ -66,16 +66,29 @@ def t_ID(t):
         t.type = t.value
     return t
 
-def t_error_STRING(t):
-    r'\"([^\\\n]|(\\[^\n]))*?\"'
-    print(">>ERROR STRING mal formado linea %s, linea no válida" % t.lineno )
-    t.lexer.skip(1)
+def is_valid_STRING(t):
+    s = str(t.value)[1:-1] #avoid '"'
+    n = len(s)
+    i = 0        
+    while s.find("\\") != -1 :
+        i = s.find("\\") + 1 #get next char after '\'
+        s = s[i:]        
+        tok = str(s[:1])
+        if tok != "n" and tok != "\"" and tok != "\\":
+            print (">>ERROR Secuencia de escape de STRING no válido \\%s" % tok )
+            print (">>>> Linea %s" % t.lineno)
+            return False
+        if tok == "\\" :
+            s = s[1:]
+    
+    return True
 
 def t_STRING(t):
     r'\".*\"'
-    print( t.value)
-    return t
-
+    if is_valid_STRING(t) :
+        return t
+    else :
+        t.lexer.skip(1)
 
 # TODO: Manejo de errores
 def t_error_COMEN(t):
@@ -105,7 +118,7 @@ lexer = lex.lex(debug=0)
 if __name__ == '__main__':
     try: 
         lex.runmain()
-        print( "\n-----------------------" )
+        print( "\n^^^^^^^^^^^^^^^^^^^^^^^" )
         print( "Analisis completo. Los errores se marcan arriba." )
     except IOError as e:
         print ("I/O error({0}): {1}".format(e.errno, e.strerror))
