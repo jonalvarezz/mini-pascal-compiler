@@ -14,11 +14,11 @@ import ply.lex as lex
 debug = False
 
 keywords = (
-	'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
+    'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
 )
 
 tokens = keywords + (
-	'LT', 'LE', 'GT', 'GE', 'EQ', 'NE', 'MAS', 'MENOS', 'DIV', 'MUL', 'PARI', 'PARD', 'COMA', 'DPUN', 'CORI', 'CORD', 'PCOMA', 'PUN', 'ASIG', 'INUM', 'FNUM', 'STRING', 'COMEN'
+    'LT', 'LE', 'GT', 'GE', 'EQ', 'NE', 'MAS', 'MENOS', 'DIV', 'MUL', 'PARI', 'PARD', 'COMA', 'DPUN', 'CORI', 'CORD', 'PCOMA', 'PUN', 'ASIG', 'INUM', 'FNUM', 'STRING', 'COMEN'
 )
 
 t_ignore = ' \t'
@@ -50,7 +50,7 @@ def t_FNUM(t):
     return t
 
 def t_INUM(t):
-    r'[0-9]+[^a-zA-Z_]'
+    r'[0-9]+[^a-zA-Z_\-\;\:\)\]\,]'
     t.value = int(t.value)
     return t
 
@@ -82,6 +82,11 @@ def is_valid_STRING(t):
             s = s[1:]
     
     return True
+
+def t_error_STRING(t):
+    r'\'.*\''
+    print (">>ERROR STRING mal formada linea %s" % t.lineno)
+    t.lexer.skip(1)
 
 def t_STRING(t):
     r'\".*\"'
