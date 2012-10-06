@@ -112,8 +112,6 @@ condicion ::= LT
     | NE
     ;
 
-
-
 type    ::= FLOAT
         | INT
         | FLOAT CORI expre CORD

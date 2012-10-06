@@ -61,6 +61,23 @@ def dump_tree(node, indent = ""):
 def type_float():
 	pass
 
+#-------------type-------------------
+def p_type(p):
+	'type: FLOAT'
+	p[0] = Node('FLOAT',[],p[1])
+
+def p_type(p):
+	'type: INT'
+	p[0] = Node('INT',[],p[1])
+
+def p_type(p):
+	'type: FLOAT CORI expre CORD'
+	p[0] = Node('FLOAT_Array',[],p[3])
+
+def p_type(p):
+	'type: INT CORI expre CORD'
+	p[0] = Node('INT_Array',[],p[3])
+
 #---------------exprelist---------------------------------------
 def exprelist_coma():
    ' exprelist: expre ; exprelist'
@@ -70,7 +87,6 @@ def exprelist_coma():
 def exprelist_():
 	'exprelist: expre'
 	p[0] = p[1]
-
 
 #---------------expre----------------------------------------------
 def p_expre_mas(p):
