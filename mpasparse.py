@@ -61,7 +61,6 @@ def dump_tree(node, indent = ""):
 def type_float():
 	pass
 
-<<<<<<< HEAD
 #-------------type-------------------
 def p_type(p):
 	'type: FLOAT'
@@ -88,9 +87,7 @@ def exprelist_coma():
 def exprelist_():
 	'exprelist: expre'
 	p[0] = p[1]
-=======
->>>>>>> 8acbdbafeaf0decd37125f5d36b99cb9549596d1
-
+	
 #---------------expre----------------------------------------------
 
 def p_expre_mas(p):
