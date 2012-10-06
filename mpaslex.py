@@ -67,12 +67,14 @@ def t_ID(t):
     return t
 
 def is_valid_STRING(t):
-    s = str(t.value)[1:-1] #avoid '"'
+    s = str(t.value)
     n = len(s)
-    i = 0        
+    i = 0
+    #Escapes no válidos.
+    s = s[1:-1] #avoid '"'
     while s.find("\\") != -1 :
         i = s.find("\\") + 1 #get next char after '\'
-        s = s[i:]        
+        s = s[i:]
         tok = str(s[:1])
         if tok != "n" and tok != "\"" and tok != "\\":
             print (">>ERROR Secuencia de escape de STRING no válido \\%s" % tok )
@@ -80,13 +82,7 @@ def is_valid_STRING(t):
             return False
         if tok == "\\" :
             s = s[1:]
-    
     return True
-
-def t_error_STRING(t):
-    r'\'.*\''
-    print (">>ERROR STRING mal formada linea %s" % t.lineno)
-    t.lexer.skip(1)
 
 def t_STRING(t):
     r'\".*\"'
@@ -95,16 +91,19 @@ def t_STRING(t):
     else :
         t.lexer.skip(1)
 
-# TODO: Manejo de errores
-def t_error_COMEN(t):
-    r'/\*(.|\n|\"|\\)*?'
-    print ( ">>ERROR: Comentario mal formado linea %s, linea no válida" % t.lineno )
+def t_error_STRING(t):
+    r'\".*'
+    print (">>ERROR Formacion STRING incorrecta, linea: %s" % t.lineno )
     t.lexer.skip(1)
 
 def t_COMEN(t):
     r'/\*(.|\n|\"|\\)*?\*/'
     return t
-#    pass
+
+def t_error_COMEN(t):
+    r'/\*(.|\n|\"|\\)*?'
+    print ( ">>ERROR: Comentario mal formado linea %s, linea no válida" % t.lineno )
+    t.lexer.skip(1)
 
 def t_newline(t):
     r'\n+'
