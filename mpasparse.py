@@ -1,6 +1,6 @@
 # Yacc
-
 import ply.yacc as yacc
+import sys
 
 # Get the token map from the lexer.  This is required.
 from mpaslex import tokens
@@ -38,9 +38,9 @@ def dump_tree(node, indent = ""):
 		datatype = node.datatype
 
 	if not node.leaf:
-		print "%s%s  %s" % (indent, node.name, datatype)
+		print ("%s %s  %s" % (indent, node.name, datatype))
 	else:
-		print "%s%s (%s)  %s" % (indent, node.name, node.leaf, datatype)
+		print ("%s%s (%s)  %s" % (indent, node.name, node.leaf, datatype))
 
 	indent = indent.replace("-"," ")
 	indent = indent.replace("+"," ")
@@ -56,6 +56,12 @@ def dump_tree(node, indent = ""):
 #  ---------------------------------------------------------------
 
 precedence =(
+	('left', 'OR'),
+	('left', 'AND'),
+    ('left', 'NOT'),
+    ('left', 'MAS', 'MENOS'),
+    ('left', 'MUL', 'DIV'),
+	('right', 'ELSE'),
 )
 
 #  ---------------------------------------------------------------
@@ -123,7 +129,7 @@ def p_loclist_0(p):
 	p[0] = Node( 'loclist_dec', [p[1]] )
 
 def p_loclist_1(p):
-	'loclist : function'
+	'loclist : funcion'
 	p[0] = Node( 'loclist_function', [p[1]] )
 
 def p_loclist_2(p):
@@ -131,7 +137,7 @@ def p_loclist_2(p):
 	p[0] = p[1].append(p[3])
 
 def p_loclist_3(p):
-	'loclist : loclist PCOMA function'
+	'loclist : loclist PCOMA funcion'
 	p[0] = p[1].append(p[3])
 
 #  ---------------------------------------------------------------
@@ -147,12 +153,17 @@ def p_dec(p):
 #  ---------------------------------------------------------------
 
 def p_sentencia_0(p):
-	'sentencia : linea '
+	'sentencia : linea pcoma_op'
 	p[0] = Node( 'sentencia', [p[1]] )
 
 def p_sentencia_1(p):
-	'sentencia : sentencia PCOMA linea '
+	'sentencia : sentencia PCOMA linea'
 	p[0] = p[1].append(p[3])
+
+def p_pcoma_op(p):
+	'''pcoma_op : PCOMA
+				| vacio'''
+	pass
 
 #  ---------------------------------------------------------------
 #  LINEA
@@ -182,7 +193,7 @@ def p_linea_5(p):
 	p[0] = Node( 'return', [p[3]] )
 
 def p_linea_6(p):
-	'linea: ID PARI exprelist PARD'
+	'linea : ID PARI exprelist PARD'
 	#TODO Compare with p_expre_call
 	p[0] = Node('call',[p[3]],p[1])
 
@@ -195,11 +206,11 @@ def p_linea_8(p):
 	p[0] = Node( 'break', [], [p[1]] )
 
 def p_linea_9(p):
-	'linea : WHILE relacion DO sentencia'
+	'linea : WHILE relacion DO BEGIN sentencia END'
 	p[0] = Node( 'while', [p[2], p[4]] )
 
 def p_linea_10(p):
-	'linea : IF relacion THEN sentencia else'
+	'linea : IF relacion THEN sentencia else_r'
 	p[0] = Node( 'if', [p[2], p[4], p[5]] )
 
 #  ---------------------------------------------------------------
@@ -207,11 +218,11 @@ def p_linea_10(p):
 #  ---------------------------------------------------------------
 
 def p_else_0(p):
-	'else : ELSE sentencia'
+	'else_r : ELSE sentencia'
 	p[0] = Node( 'else', [p[2]] )
 
 def p_else_1(p):
-	'else : vacio'
+	'else_r : vacio'
 	p[0] = Node( 'void else' )
 
 #  ---------------------------------------------------------------
@@ -219,59 +230,55 @@ def p_else_1(p):
 #  ---------------------------------------------------------------
 
 def p_location_1(p):
-	'location: ID'
+	'location : ID'
 	p[0] = Node('id',[],p[1])
 
 def p_location_2(p):
-	'location: ID CORI expre CORD'
+	'location : ID CORI expre CORD'
 	p[0] = Node('id[]',[],p[1])
 
 #  ---------------------------------------------------------------
 #  RELACION
 #  ---------------------------------------------------------------
 
-def p_relacion_condicion(p):
-    'relacion: expre condicion expre'
-    p[0] = Node('relacion_condicion', [p[1],p[3]])
-
 def p_relacion_lt(p):
-	'relacion: expre LT expre'
+	'relacion : expre LT expre'
 	p[0] = Node('<',[p[1],p[3]])
 
 def p_relacion_le(p):
-	'relacion: expre LE expre'
+	'relacion : expre LE expre'
 	p[0] = Node('<=',[p[1],p[3]])
 
 def p_relacion_gt(p):
-	'relacion: expre GT expre'
+	'relacion : expre GT expre'
 	p[0] = Node('>',[p[1],p[3]])
 
 def p_relacion_ge(p):
-	'relacion: expre GE expre'
+	'relacion : expre GE expre'
 	p[0] = Node('>=',[p[1],p[3]])
 
 def p_relacion_eq(p):
-	'relacion: expre EQ expre'
+	'relacion : expre EQ expre'
 	p[0] = Node('=',[p[1],p[3]])
 
 def p_relacion_ne(p):
-	'relacion: expre NE expre'
+	'relacion : expre NE expre'
 	p[0] = Node('!=',[p[1],p[3]])	 
 
 def p_relacion_and(p):
-	'relacion: relacion AND relacion'
+	'relacion : relacion AND relacion'
 	p[0] = Node('and',[p[1],p[3]])
 
 def p_relacion_or(p):
-	'relacion: relacion OR relacion'
+	'relacion : relacion OR relacion'
 	p[0] = Node('or',[p[1],p[3]])
 
 def p_relacion_not(p):
-	'relacion: NOT relacion'
+	'relacion : NOT relacion'
 	p[0] =node('not',[p[2]])
 
 def p_relacion_parent(p):
-	'relacion: PARI relacion PARD'
+	'relacion : PARI relacion PARD'
 	p[0] =node('relacion',[p[2]])
 
 #  ---------------------------------------------------------------
@@ -279,19 +286,19 @@ def p_relacion_parent(p):
 #  ---------------------------------------------------------------
 
 def p_type_f(p):
-	'type: FLOAT'
+	'type : FLOAT'
 	p[0] = Node('FLOAT',[],p[1])
 
 def p_type_i(p):
-	'type: INT'
+	'type : INT'
 	p[0] = Node('INT',[],p[1])
 
 def p_type_fa(p):
-	'type: FLOAT CORI expre CORD'
+	'type : FLOAT CORI expre CORD'
 	p[0] = Node('FLOAT_Array',[],p[3])
 
 def p_type_ia(p):
-	'type: INT CORI expre CORD'
+	'type : INT CORI expre CORD'
 	p[0] = Node('INT_Array',[],p[3])
 
 #  ---------------------------------------------------------------
@@ -299,11 +306,11 @@ def p_type_ia(p):
 #  ---------------------------------------------------------------
 
 def p_exprelist_coma(p):
-	'exprelist: exprelist COMA expre'
+	'exprelist : exprelist COMA expre'
 	p[0] = p[1].append(p[3])
 
 def p_exprelist_(p):
-	'exprelist: expre'
+	'exprelist : expre'
 	p[0] = p[1]
 	
 #  ---------------------------------------------------------------
@@ -311,64 +318,64 @@ def p_exprelist_(p):
 #  ---------------------------------------------------------------
 
 def p_expre_mas(p):
-	'expre: expre MAS expre'
+	'expre : expre MAS expre'
 	p[0]= Node('+',[p[1],p[3]])
 
 def p_expre_menos(p):
-	'expre: expre MENOS expre'
+	'expre : expre MENOS expre'
 	p[0]= Node('-',[p[1],p[3]])
  
 def p_expre_mul(p):
-	'expre: expre MUL expre'
+	'expre : expre MUL expre'
 	p[0]= Node('*',[p[1],p[3]])
 
 def p_expre_div(p):
-	'expre: expre DIV expre'
+	'expre : expre DIV expre'
 	p[0]= Node('/',[p[1],p[3]])
  
 def p_expre_menosu(p):
-	'expre: MENOS expre'
+	'expre : MENOS expre'
 	p[0]= Node('umenos',[p[2]])
 
 def p_expre_masu(p):
-	'expre: MAS expre'
+	'expre : MAS expre'
 	p[0]= Node('umas',[p[2]])
 
 def p_expre_call(p):
-	'expre: ID PARI exprelist PARD'
+	'expre : ID PARI exprelist PARD'
 	#TODO
 	p[0] = Node('call',[p[3]],p[1])
 
 def p_expre_id(p):
-	'expre: ID'
+	'expre : ID'
 	p[0] = Node('id', [], p[1])
 	p[0].value = p[1]
 
 def p_expre_array(p):
-	'expre: ID CORI exprelist CORD'
+	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
 
 	#indices enteros
 	if hasattr(p[3],'typ'):
 		if p[3].typ != 'int':
-			print "#Error# El indice del array debe ser un valor entero '%s'" % f.name
+			print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
 		else:
 			p[0].typ = p[3].typ
 
 def p_expre_fnum(p):
-	'expre: FNUM'
-	p[0]= Node('numero_f',p[1])
+	'expre : FNUM'
+	p[0]= Node('numero_f',[], p[1])
 
 def p_expre_inum(p):
-	'expre: INUM'
-	p[0]= Node('numero',p[1])
+	'expre : INUM'
+	p[0]= Node('numero',[],p[1])
 
 def p_expre_cast_int(p):
-	'expre: INT PARI expre PARD'
+	'expre : INT PARI expre PARD'
 	p[0] = Node('cast_int',[p[3]],p[1])
 
 def p_expre_cast_float(p):
-	'expre: FLOAR PARI expre PARD'
+	'expre : FLOAT PARI expre PARD'
 	p[0] = Node('cast_float',[p[3]],p[1])
 
 
@@ -377,6 +384,33 @@ def p_expre_cast_float(p):
 #  PARSER
 # -----------------------------------------------------------------------------
 
+#Regla vacio
+def p_vacio(p):
+	"vacio :"
+	pass
+
 # Error rule for syntax errors
 def p_error(p):
-    print "Syntax error in input!"
+    print ("Syntax error in input!")
+
+# Build the parser ------------------------------------------
+# Set up a logging object
+import logging
+logging.basicConfig(
+    level = logging.DEBUG,
+    filename = "parselog.txt",
+    filemode = "w",
+    format = "%(filename)10s:%(lineno)4d:%(message)s"
+)
+
+log = logging.getLogger()
+
+parser = yacc.yacc(debug=True,errorlog=log)
+
+try :
+   f = open(sys.argv[1])
+   res = parser.parse(f.read())
+   f.close()
+   dump_tree( res )
+except EOFError:
+   print( "Archivo no encontrado" )
