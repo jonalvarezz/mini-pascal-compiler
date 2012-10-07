@@ -39,12 +39,18 @@ funcion : FUN ID argumento locales BEGIN sentencia END
 argumento : PARI PARD
           | PARI declaracion PARD
 
-declaracion : ID DPUN type 
-            | declaracion COMA declaracion
-            | vacio
+declaracion : dec
+            | declaracion COMA dec
 
-locales : ID DPUN type 
-        |   declaracion PCOMA declaracion
+locales : loclist PCOMA
+        | vacio
+
+loclist : dec
+        | function
+        | loclist PCOMA dec
+        | loclist PCOMA function
+
+dec : ID DPUN type
 
 sentencia : linea 
           | sentencia PCOMA linea
