@@ -70,14 +70,14 @@ def is_valid_STRING(t):
     s = str(t.value)
     n = len(s)
     i = 0
-    #Escapes no válidos.
+    #Escapes no validos.
     s = s[1:-1] #avoid '"'
     while s.find("\\") != -1 :
         i = s.find("\\") + 1 #get next char after '\'
         s = s[i:]
         tok = str(s[:1])
         if tok != "n" and tok != "\"" and tok != "\\":
-            print (">>ERROR Secuencia de escape de STRING no válido \\%s" % tok )
+            print (">>ERROR Secuencia de escape de STRING no valido \\%s" % tok )
             print (">>>> Linea %s" % t.lineno)
             return False
         if tok == "\\" :
@@ -102,7 +102,7 @@ def t_COMEN(t):
 
 def t_error_COMEN(t):
     r'/\*(.|\n|\"|\\)*?'
-    print ( ">>ERROR: Comentario mal formado linea %s, linea no válida" % t.lineno )
+    print ( ">>ERROR: Comentario mal formado linea %s, linea no valida" % t.lineno )
     t.lexer.skip(1)
 
 def t_newline(t):
@@ -111,7 +111,7 @@ def t_newline(t):
 
 
 def t_error(t):
-    print(">>ERROR: Caracter no válido %s" % t.value[0])
+    print(">>ERROR: Caracter no valido %s" % t.value[0])
     print(">>>>> linea %s" %  t.lineno)
     t.lexer.skip(1)
 

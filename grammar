@@ -25,13 +25,13 @@ dec : ID DPUN type
 sentencia : linea 
           | sentencia PCOMA linea
 
-linea : expre 
+linea : expre
       | WRITE PARI expre PARD
       | READ PARI location PARD
       | PRINT PARI STRING PARD  
       | ID ASIG expre
       | RETURN expre
-      | ID PARI expre PARD
+      | ID PARI exprelist PARD
       | SKIP
       | BREAK
       | WHILE relacion DO sentencia
