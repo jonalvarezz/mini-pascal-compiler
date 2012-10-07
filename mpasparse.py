@@ -81,7 +81,7 @@ def p_programa_1(p):
 #  ---------------------------------------------------------------
 
 def p_funcion(p):
-	'funcion : FUN ID argumento locales linea'
+	'funcion : FUN ID argumento locales BEGIN linea END'
 	p[0] = Node( 'funcion', [p[2], p[3], p[4], p[6]] )
 
 #  ---------------------------------------------------------------
@@ -125,21 +125,25 @@ def p_locales_1(p):
 #  ---------------------------------------------------------------
 
 def p_loclist_0(p):
-	'loclist : dec'
+	'loclist : loc'
 	p[0] = Node( 'loclist_dec', [p[1]] )
 	p[0].name = p[1].name
 
-def p_loclist_1(p):
-	'loclist : funcion'
-	p[0] = Node( 'loclist_function', [p[1]] )
-
 def p_loclist_2(p):
-	'loclist : loclist PCOMA dec'
+	'loclist : loclist PCOMA loc'
 	p[0] = p[1].append(p[3])
 
-def p_loclist_3(p):
-	'loclist : loclist PCOMA funcion'
-	p[0] = p[1].append(p[3])
+#  ---------------------------------------------------------------
+#  LOC
+#  ---------------------------------------------------------------
+
+def p_loc_0(p):
+	'loc : dec'
+	p[0] = p[1]
+
+def p_loc_1(p):
+	'loc : funcion'
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  DEC
@@ -147,7 +151,7 @@ def p_loclist_3(p):
 
 def p_dec(p):
 	'dec : ID DPUN type'
-	p[0] = Node( 'dec', [p[1], p[3]] )
+	p[0] = Node( 'dec', [p[3]], p[1] )
 
 #  ---------------------------------------------------------------
 #  LINEAS
@@ -164,6 +168,7 @@ def p_lineas_1(p):
 #  ---------------------------------------------------------------
 #  LINEA
 #  ---------------------------------------------------------------
+
 def p_linea_0(p):
 	'linea : expre'
 	p[0] = Node( 'expre', [p[1]] )
@@ -189,9 +194,8 @@ def p_linea_5(p):
 	p[0] = Node( 'return', [p[2]], p[1] )
 
 def p_linea_6(p):
-	'linea : ID PARI exprelist PARD'
-	#TODO Compare with p_expre_call
-	p[0] = Node('call',[p[3]],p[1])
+	'linea : call'
+	p[0] = p[1]
 
 def p_linea_7(p):
 	'linea : SKIP'
@@ -203,7 +207,7 @@ def p_linea_8(p):
 
 def p_linea_9(p):
 	'linea : WHILE relacion DO linea'
-	p[0] = Node( 'while', [p[2], p[5]] )
+	p[0] = Node( 'while', [p[2], p[4]] )
 
 def p_linea_10(p):
 	'linea : IF relacion THEN linea else_r'
@@ -212,6 +216,14 @@ def p_linea_10(p):
 def p_linea_11(p):
 	'linea : BEGIN lineas END'
 	p[0] = p[2]
+
+#  ---------------------------------------------------------------
+#  CALL
+#  ---------------------------------------------------------------
+
+def p_call(p):
+	'call : ID PARI exprelist PARD'
+	p[0] = Node( 'call', [p[3]], p[1] )
 
 #  ---------------------------------------------------------------
 #  ELSE
@@ -342,9 +354,8 @@ def p_expre_masu(p):
 	p[0]= Node('umas',[p[2]])
 
 def p_expre_call(p):
-	'expre : ID PARI exprelist PARD'
-	#TODO
-	p[0] = Node('call1',[p[3]],p[1])
+	'expre : call'
+	p[0] = p[1]
 
 def p_expre_id(p):
 	'expre : ID'

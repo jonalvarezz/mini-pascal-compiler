@@ -4,7 +4,7 @@ Gramatica independiente del contexto - mPascal
 programa : funcion
          | programa funcion
 
-funcion : FUN ID argumento locales linea
+funcion : FUN ID argumento locales BEGIN lineas END
 
 argumento : PARI PARD
           | PARI declaracion PARD
@@ -15,10 +15,11 @@ declaracion : dec
 locales : loclist PCOMA
         | vacio
 
-loclist : dec
-        | function
-        | loclist PCOMA dec
-        | loclist PCOMA function
+loclist : loc
+        | loclist PCOMA loc
+
+loc : dec
+    | funcion
 
 dec : ID DPUN type
 
@@ -31,18 +32,20 @@ linea : expre
       | PRINT PARI STRING PARD  
       | ID ASIG expre
       | RETURN expre
-      | ID PARI exprelist PARD
+      | call
       | SKIP
       | BREAK
       | WHILE relacion DO linea
       | IF relacion THEN linea else
       | BEGIN lineas END
 
+call : ID PARI exprelist PARD
+
 else : ELSE linea
      | vacio
 
 location : ID
-         | ID PARI expre PARD
+         | ID CORI expre CORD
 
 relacion : expre LT expre
          | expre LE expre
@@ -69,7 +72,7 @@ expre   : expre  MAS expre
         | expre  DIV expre  
         | MENOS expre 
         | MAS   expre   
-        | ID PARI exprelist PARD
+        | call
         | ID
         | ID CORI expre CORD
         | INUM
