@@ -3,126 +3,90 @@ lista de todos los tokens
 
 'INT', FLOAT, WHILE, IF, THEN, ELSE, BEGIN, DO, END, PRINT, WRITE, READ, 'SKIP', 'RETURN', 'BREAK', 'AND', 'OR', 'NOT', 'FUN', 'ID',
 
-ASIG	::= ':='
-INUM	::= '\d+'
-FNUM	::= '(\d*\.d+)(E[\+-]?|([1-9]\d*E[\+-]?\d+)'
-STRING	::= '"."'
-ID	    ::= '[a-zA-Z_][a-zA-Z0-9]_'
-COMEN	::= '/\*(.|\n|\"|\\)*?\*/'
-LT	    ::= '<'
-LE	    ::= '<=
-GT	    ::= '>'
-GE	    ::= '>='
-EQ	    ::= '='
-NE	    ::= '!='
-MAS	    ::= '+'
-MENOS	::= '-'
-DIV	    ::= '/'
-MUL	    ::= '*'
-PARI	::= '('
-PARD	::= ')'
-COMA	::= ','
-DPUN	::= ':'
-CORI	::= '['
-CORD	::= ']'
-PCOMA	::= ';'
-PUN	    ::= '.'
-AND 	::= 'and'
+ASIG	: ':='
+INUM	: '\d+'
+FNUM	: '(\d*\.d+)(E[\+-]?|([1-9]\d*E[\+-]?\d+)'
+STRING	: '"."'
+ID	    : '[a-zA-Z_][a-zA-Z0-9]_'
+COMEN	: '/\*(.|\n|\"|\\)*?\*/'
+LT	    : '<'
+LE	    : '<=
+GT	    : '>'
+GE	    : '>='
+EQ	    : '='
+NE	    : '!='
+MAS	    : '+'
+MENOS	: '-'
+DIV	    : '/'
+MUL	    : '*'
+PARI	: '('
+PARD	: ')'
+COMA	: ','
+DPUN	: ':'
+CORI	: '['
+CORD	: ']'
+PCOMA	: ';'
+PUN	    : '.'
+AND 	: 'and'
 
 Gramatica independiente del contexto
 =====================================
-programa ::= funcion
-          |  programa funcion
-          ;  
+programa : funcion
+         | programa funcion
 
-funcion ::= FUN ID argumento locales sentencia
-          ;
+funcion : FUN ID argumento locales BEGIN sentencia END
 
-argumento ::= PARI PARD
-          |   PARI declaracion PARD
-          ;
+argumento : PARI PARD
+          | PARI declaracion PARD
 
-declaracion ::= ID DPUN type 
-            |   declaracion COMA declaracion
-            |   vacio
-            ;
+declaracion : ID DPUN type 
+            | declaracion COMA declaracion
+            | vacio
 
-locales ::= ID DPUN type 
-            |   declaracion PCOMA declaracion
-            ;
+locales : ID DPUN type 
+        |   declaracion PCOMA declaracion
 
-sentencia ::= 'begin' lineas 'end'
-    ;
+sentencia : linea 
+          | sentencia PCOMA linea
 
-lineas ::= linea 
-       | lineas PCOMA linea
-       ;
+linea : expre 
+      | WRITE PARI expre PARD
+      | READ PARI location PARD
+      | PRINT PARI STRING PARD  
+      | ID ASIG expre
+      | RETURN expre
+      | ID PARI expre PARD
+      | SKIP
+      | BREAK
+      | WHILE relacion DO sentencia
+      | IF relacion THEN sentencia  else
 
-linea ::= expre 
-    | write 
-    | read
-    | print 
-    | assing
-    | RETURN expre
-    | ID PARI expre PARD
-    | SKIP 
-    | BREAK
-    | while
-    ;
+else : ELSE sentencia
+      | vacio
 
+location : ID
+         | ID PARI expre PARD
 
-while :== while relacion DO sentencia
-    ; 
+relacion : expre LT expre
+         | expre LE expre
+         | expre GT expre
+         | expre GE expre
+         | expre EQ expre
+         | expre NE expre
+         | relacion AND relacion
+         | relacion OR relacion
+         | NOT relacion
+         | PARI relacion PARD
 
-if ::= if relacion 'then' sentencia  else  
-    ;
+type  : FLOAT
+      | INT
+      | FLOAT CORI expre CORD
+      | INT CORI expre CORD
 
-else ::= ELSE sentencia
-      | vacio 
-      ; 
+exprelist :  expre COMA exprelist
+          |  expre
 
-write::= write PARI expre PARD
-     ;
-
-read ::= read PARI location PARD
-     ; 
-
-print ::= print PARI STRING PARD 
-      ;
-
-assing   ::= ID := expre
-            ;
-
-location ::= ID
-         |   ID CORI expre CORD
-        ;
-
-relacion ::=  expre condicion expre 
-         |   relacion AND relacion
-         |   relacion OR relacion
-         |   NOT relacion
-         |   PARI relacion PARD
-              ;
-
-condicion ::= LT
-    | LE
-    | GT
-    | GE
-    | EQ
-    | NE
-    ;
-
-type    ::= FLOAT
-        | INT
-        | FLOAT CORI expre CORD
-        | INT CORI expre CORD
-        ;
-
-exprelist ::=  expre COMA exprelist
-            |  expre
-            ;
-
-expre   ::= expre  MAS expre 
+expre   : expre  MAS expre 
         |   expre  MENOS expre
         |   expre  MUL expre 
         |   expre  DIV expre  
@@ -135,4 +99,3 @@ expre   ::= expre  MAS expre
         |   FNUM
         |   INT PARI expre PARD
         |   FLOAR PARI expre PARD 
-        ;
