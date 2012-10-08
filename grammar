@@ -32,7 +32,6 @@ linea : expre
       | PRINT PARI STRING PARD  
       | ID ASIG expre
       | RETURN expre
-      | call
       | SKIP
       | BREAK
       | WHILE relacion DO linea

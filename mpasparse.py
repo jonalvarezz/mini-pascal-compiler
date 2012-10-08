@@ -37,19 +37,24 @@ def dump_tree(node, indent = ""):
 	else:
 		datatype = node.datatype
 
-	if not node.leaf:
-		print ("%s %s  %s" % (indent, node.name, datatype))
-	else:
-		print ("%s%s (%s)  %s" % (indent, node.name, node.leaf, datatype))
-
-	indent = indent.replace("-"," ")
-	indent = indent.replace("+"," ")
-	for i in range(len(node.children)):
-		c = node.children[i]
-		if i == len(node.children)-1:
-			dump_tree(c, indent + "  +-- ")
+	try:
+		if not node.leaf:
+			print ("%s %s  %s" % (indent, node.name, datatype))
 		else:
-			dump_tree(c, indent + "  |-- ")
+			print ("%s%s (%s)  %s" % (indent, node.name, node.leaf, datatype))
+
+		indent = indent.replace("-"," ")
+		indent = indent.replace("+"," ")
+		for i in range(len(node.children)):
+			c = node.children[i]
+			if i == len(node.children)-1:
+				dump_tree(c, indent + "  +-- ")
+			else:
+				dump_tree(c, indent + "  |-- ")
+
+	except AttributeError:
+		print( 'Error de atributo en el nodo: %s' % node )
+		
 
 #  ---------------------------------------------------------------
 #  PRECEDENCIAS
@@ -81,20 +86,20 @@ def p_programa_1(p):
 #  ---------------------------------------------------------------
 
 def p_funcion(p):
-	'funcion : FUN ID argumento locales BEGIN linea END'
-	p[0] = Node( 'funcion', [p[2], p[3], p[4], p[6]] )
+	'funcion : FUN ID PARI argumento PARD locales BEGIN lineas END'
+	p[0] = Node( 'funcion', [p[4], p[6], p[8]], p[2] )
 
 #  ---------------------------------------------------------------
 #  ARGUMENTO
 #  ---------------------------------------------------------------
 
 def p_argumento_0(p):
-	'argumento : PARI PARD'
-	p[0] = Node( 'void argumento', [] )
+	'argumento : vacio'
+	p[0] = Node( 'argumento()' )
 
 def p_argumento_1(p):
-	'argumento : PARI declaracion PARD'
-	p[0] = p[2]
+	'argumento : declaracion'
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  DECLARACIONES
@@ -102,11 +107,12 @@ def p_argumento_1(p):
 
 def p_declaracion_0(p):
 	'declaracion : dec'
-	p[0] = Node( 'declaracion_dec', [p[1]] )
+	p[0] = Node( 'argumento', [p[1]] )
 
 def p_declaracion_1(p):
 	'declaracion : declaracion COMA dec'
-	p[0] = p[1].append(p[3])
+	p[1].append(p[3])
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  LOCALES
@@ -118,7 +124,7 @@ def p_locales_0(p):
 
 def p_locales_1(p):
 	'locales : vacio'
-	p[0] = Node( 'void locales', [] )
+	p[0] = Node('locales')
 
 #  ---------------------------------------------------------------
 #  LOCLIST
@@ -131,7 +137,8 @@ def p_loclist_0(p):
 
 def p_loclist_2(p):
 	'loclist : loclist PCOMA loc'
-	p[0] = p[1].append(p[3])
+	p[1].append(p[3])
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  LOC
@@ -151,7 +158,7 @@ def p_loc_1(p):
 
 def p_dec(p):
 	'dec : ID DPUN type'
-	p[0] = Node( 'dec', [p[3]], p[1] )
+	p[0] = Node( 'declaracion', [p[3]], p[1] )
 
 #  ---------------------------------------------------------------
 #  LINEAS
@@ -159,11 +166,12 @@ def p_dec(p):
 
 def p_lineas_0(p):
 	'lineas : linea'
-	p[0] = Node( 'linea', [p[1]] )
+	p[0] = Node('linea', [p[1]])
 
 def p_lineas_1(p):
 	'lineas : lineas PCOMA linea'
-	p[0] = p[1].append(p[3])
+	p[1].append(p[3])
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  LINEA
@@ -193,10 +201,6 @@ def p_linea_5(p):
 	'linea : RETURN expre'
 	p[0] = Node( 'return', [p[2]], p[1] )
 
-def p_linea_6(p):
-	'linea : call'
-	p[0] = p[1]
-
 def p_linea_7(p):
 	'linea : SKIP'
 	p[0] = Node( 'skip', [p[1]] )
@@ -218,14 +222,6 @@ def p_linea_11(p):
 	p[0] = p[2]
 
 #  ---------------------------------------------------------------
-#  CALL
-#  ---------------------------------------------------------------
-
-def p_call(p):
-	'call : ID PARI exprelist PARD'
-	p[0] = Node( 'call', [p[3]], p[1] )
-
-#  ---------------------------------------------------------------
 #  ELSE
 #  ---------------------------------------------------------------
 
@@ -235,7 +231,7 @@ def p_else_0(p):
 
 def p_else_1(p):
 	'else_r : vacio'
-	p[0] = Node( 'void else' )
+	p[0] = Node( 'else' )
 
 #  ---------------------------------------------------------------
 #  LOCATION
@@ -299,19 +295,19 @@ def p_relacion_parent(p):
 
 def p_type_f(p):
 	'type : FLOAT'
-	p[0] = Node('FLOAT',[],p[1])
+	p[0] = Node('type_float',[], p[1])
 
 def p_type_i(p):
 	'type : INT'
-	p[0] = Node('INT',[],p[1])
+	p[0] = Node('type_int',[],p[1])
 
 def p_type_fa(p):
 	'type : FLOAT CORI expre CORD'
-	p[0] = Node('FLOAT_Array', [p[3]])
+	p[0] = Node('type_float_Array', [p[3]])
 
 def p_type_ia(p):
 	'type : INT CORI expre CORD'
-	p[0] = Node('INT_Array', [p[3]])
+	p[0] = Node('type_int_Array', [p[3]])
 
 #  ---------------------------------------------------------------
 #  EXPRLIST
@@ -319,7 +315,8 @@ def p_type_ia(p):
 
 def p_exprelist_coma(p):
 	'exprelist : exprelist COMA expre'
-	p[0] = p[1].append(p[3])
+	p[1].append(p[3])
+	p[0] = p[1]
 
 def p_exprelist_(p):
 	'exprelist : expre'
@@ -354,8 +351,8 @@ def p_expre_masu(p):
 	p[0]= Node('umas',[p[2]])
 
 def p_expre_call(p):
-	'expre : call'
-	p[0] = p[1]
+	'expre : ID PARI exprelist PARD'
+	p[0] = Node( 'call', [p[3]], p[1] )
 
 def p_expre_id(p):
 	'expre : ID'
@@ -397,7 +394,7 @@ def p_expre_cast_float(p):
 
 #Regla vacio
 def p_vacio(p):
-	"vacio :"
+	'vacio :'
 	pass
 
 # Error rule for syntax errors
