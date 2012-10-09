@@ -1,12 +1,10 @@
-FUN quicksort(l:INT, r:INT)
-BEGIN
-	i:INT;
-	x:INT;
+FUN quicksort( l:INT, r:INT )
 	w:INT;
 	p:FLOAT;
+BEGIN
 	WRITE(v[i]);
-	PRINT("Éxito\n");
-	WHILE i<n do
+	PRINT("exito");
+	WHILE i < n DO
 	BEGIN
 		i := 45
 	END

@@ -3,9 +3,9 @@ BEGIN
 	PRINT( "Una cadena de text" );
 	PRINT( "1 Una cadena de text" );	
 	WRITE( 5 + 2 / 2 );
-	WHILE i <= 89 DO
-	BEGIN
-		var := var + 1;
-		PRINT("var-1")
-	END
+	IF 3 > x THEN
+		PRINT ("X")
+	ELSE
+		READ(X);
+	RETURN X
 END
