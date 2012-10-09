@@ -195,7 +195,7 @@ def p_linea_3(p):
 
 def p_linea_4(p):
 	'linea : ID ASIG expre'
-	p[0] = Node( ':=', [p[1], p[3]] )
+	p[0] = Node( ':=', [p[3]], p[1] )
 
 def p_linea_5(p):
 	'linea : RETURN expre'
