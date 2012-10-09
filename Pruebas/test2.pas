@@ -1,31 +1,31 @@
-fun main()
-	v:int[ 8192 ];
-	i:int;
-	n:int;
-begin
-	print("Entre n: ");
-	read(n);
+FUN main()
+	v:INT[ 8192 ];
+	i:INT;
+	n:INT;
+BEGIN
+	PRINT("Entre n: ");
+	READ(n);
 	i := 0 ;
-	while i<n do
-	begin
+	WHILE i<n do
+	BEGIN
 		read(v[i]);
 		i := i+1
-	end
+	END
 	quicksort( 0 , n-1 , v );
 	i := 0  ;
-	while i<n-1 do
-	begin
-		write(v[i]); print(" ");
-		if 0 < v[i] - v[ i+1 ] then
-		begin
-			print("Quicksort falló");
+	WHILE i<n-1 do
+	BEGIN
+		WRITE(v[i]); PRINT(" ");
+		IF 0 < v[i] - v[ i+1 ] THEN
+		BEGIN
+			prINT("Quicksort falló");
 			write(i);
-			print("\n");
+			prINT("\n");
 			return( 0 )
-		end
-		else
+		END
+		ELSE
 			i:=i+1
-	end
-	write(v[i]);
-	print("Éxito\n")
-end
+	END
+	WRITE(v[i]);
+	PRINT("Éxito\n")
+END
