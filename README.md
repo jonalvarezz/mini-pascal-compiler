@@ -7,16 +7,15 @@ Implementación de un compilador para el lenguaje minipascal [MOD]. Fines educat
 Un programa de minipascal esta comprendido por una o más funciones.
 
 **Ejemplo de una función**
-```pascal
+```
 FUN foo( arg:INT )
 BEGIN
   PRINT( "Hello World" )
 END
 ```
-<br />
 
 **En general**
-```pascal
+```
 FUN <nombre funcion> ( <argumento0:type>, <argumento1:type>,... ,<argumentoN:type> )
   <var0>:<type>;
   <varN>:<type>;
@@ -26,11 +25,10 @@ BEGIN
   <sentenceN>
 END
 ```
-<br />
 
 Cada sentencia finaliza con un punto y coma a excepción de la última sentencia.
-##Ejemplo
-```pascal
+**Ejemplo**
+```
 FUN main() 
  n:int;
  BEGIN
@@ -43,20 +41,20 @@ FUN main()
   PRINT("Éxito\n")
 END
 ```
-<br />
+
 ## Sentencias de Niveles Inferiores
 Las sentencias IF y WHILE, requieren definición de sentencias de un nivel más bajo.
-<br />
-Ejemplo Sentencia de segundo nivel:
-```pascal
+
+**Ejemplo Sentencia de segundo nivel:**
+```
 FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
     PRINT( "Hello World" )
 END
 ```
-<br />
-```pascal
+
+```
 FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
@@ -66,8 +64,7 @@ BEGIN
 END
 ```
 
-<br />
-```pascal
+```
 FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
@@ -78,11 +75,8 @@ BEGIN
 END
 ```
 
-
-<br / >
-<br / >
 Ejemplo Sentencias de niveles inferiores.
-```pascal
+```
 FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
@@ -94,8 +88,8 @@ BEGIN
   END
 END
 ```
-<br / >
-```pascal
+
+```
 FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
@@ -106,8 +100,8 @@ BEGIN
   PRINT( "Hello World" );  
 END
 ```
-<br / >
-```pascal
+
+```
 FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
@@ -124,7 +118,6 @@ BEGIN
 END
 ```
 
-<br / >
 #Autores
 Jonathan Alvarez Gonzalez @jonaAlvarezG
 Daniel Bernal @tamarindoDN
