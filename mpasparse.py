@@ -166,7 +166,7 @@ def p_dec(p):
 
 def p_lineas_0(p):
 	'lineas : linea'
-	p[0] = Node('linea', [p[1]])
+	p[0] = Node('lineas', [p[1]])
 
 def p_lineas_1(p):
 	'lineas : lineas PCOMA linea'

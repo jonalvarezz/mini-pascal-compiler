@@ -16,15 +16,15 @@ BEGIN
 	WHILE i < n-1 DO
 	BEGIN
 		WRITE(v[i]); PRINT(" ");
-		IF 0 < v[i] - v[ i+1 ] THEN
+		IF 0 < v[i] + v[i+1] THEN
 		BEGIN
-			prINT("Quicksort falló");
-			write(i);
-			prINT("\n");
-			return( 0 )
+			PRINT("Quicksort falló");
+			WRITE(i);
+			PRINT("\n");
+			RETURN 0 
 		END
 		ELSE
-			i:=i+1;
+			i := i + 1
 	END;
 	WRITE(v[i]);
 	PRINT("Éxito\n")
