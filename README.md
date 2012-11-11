@@ -6,14 +6,16 @@ Implementación de un compilador para el lenguaje minipascal [MOD]. Fines educat
 ##USO
 Un programa de minipascal esta comprendido por una o más funciones.
 
-***Ejemplo de una función***
-```FUN foo( arg:INT )
+**Ejemplo de una función**
+```pascal
+FUN foo( arg:INT )
 BEGIN
   PRINT( "Hello World" )
 END
 ```
 <br />
-***En general***
+
+**En general**
 ```pascal
 FUN <nombre funcion> ( <argumento0:type>, <argumento1:type>,... ,<argumentoN:type> )
   <var0>:<type>;
@@ -25,9 +27,11 @@ BEGIN
 END
 ```
 <br />
-Cada sentencia finaliza con un punto y coma ```;``` a excepción de la última sentencia.
+
+Cada sentencia finaliza con un punto y coma a excepción de la última sentencia.
 ##Ejemplo
-```FUN main() 
+```pascal
+FUN main() 
  n:int;
  BEGIN
   WHILE i<n-1 do
@@ -44,32 +48,42 @@ END
 Las sentencias IF y WHILE, requieren definición de sentencias de un nivel más bajo.
 <br />
 Ejemplo Sentencia de segundo nivel:
-```FUN foo( arg:INT )
+```pascal
+FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
     PRINT( "Hello World" )
-END```
+END
+```
 <br />
-```FUN foo( arg:INT )
+```pascal
+FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
     PRINT ( "Hello world" )
   ELSE
     PRINT ( "Arg no es mayor que cero" )
-END```
+END
+```
+
 <br />
-```FUN foo( arg:INT )
+```pascal
+FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
     PRINT ( "Hello world" )
   ELSE
     PRINT ( "Arg no es mayor que cero" );
   WRITE( arg )
-END```
+END
+```
+
+
 <br / >
 <br / >
 Ejemplo Sentencias de niveles inferiores.
-```FUN foo( arg:INT )
+```pascal
+FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
   BEGIN
@@ -78,9 +92,11 @@ BEGIN
     ( ... )
     PRINT( "Ultima linea sin punto y coma" )
   END
-END```
-
-```FUN foo( arg:INT )
+END
+```
+<br / >
+```pascal
+FUN foo( arg:INT )
 BEGIN
   WHILE arg < 3  DO
   BEGIN    
@@ -88,9 +104,11 @@ BEGIN
     PRINT( "Ultima linea sin punto y coma" )
   END;
   PRINT( "Hello World" );  
-END```
-
-```FUN foo( arg:INT )
+END
+```
+<br / >
+```pascal
+FUN foo( arg:INT )
 BEGIN
   IF arg > 0 THEN
   BEGIN
@@ -103,9 +121,10 @@ BEGIN
     PRINT ( "Arg no es mayor que cero" )
   END;
   WRITE( arg )
-END```
+END
+```
 
-
+<br / >
 #Autores
 Jonathan Alvarez Gonzalez @jonaAlvarezG
 Daniel Bernal @tamarindoDN
