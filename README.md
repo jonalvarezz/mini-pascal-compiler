@@ -3,17 +3,19 @@
 Implementación de un compilador para el lenguaje minipascal [MOD]. Fines educativos. - UTP
 
 
-#USO
+##USO
 Un programa de minipascal esta comprendido por una o más funciones.
 
-##Ejemplo de una función
+***Ejemplo de una función***
 ```FUN foo( arg:INT )
 BEGIN
   PRINT( "Hello World" )
-END```
+END
+```
 <br />
-##En general 
-```FUN <nombre funcion> ( <argumento0:type>, <argumento1:type>,... ,<argumentoN:type> )
+***En general***
+```pascal
+FUN <nombre funcion> ( <argumento0:type>, <argumento1:type>,... ,<argumentoN:type> )
   <var0>:<type>;
   <varN>:<type>;
 BEGIN
