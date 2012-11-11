@@ -5,7 +5,7 @@ BEGIN
 	WRITE(v[i]);
 	PRINT("exito");
 	WHILE i < n DO
-	BEGIN
-		i := 45
-	END
+		i := 45;
+	PRINT("exito");
+
 END
