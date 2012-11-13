@@ -36,7 +36,7 @@ def dump_tree(node, indent = ""):
 		datatype = ""
 	else:
 		datatype = node.datatype
-
+        print( ' %s' % datatype )
 	try:
 		if not node.leaf:
 			print ("%s %s  %s" % (indent, node.name, datatype))
@@ -53,7 +53,7 @@ def dump_tree(node, indent = ""):
 				dump_tree(c, indent + "  |-- ")
 
 	except AttributeError:
-		print( 'Error de atributo en el nodo: %s' % node )
+		print( 'Error de atributo en el nodo: %s' % datatype )
 		
 
 #  ---------------------------------------------------------------
@@ -74,12 +74,22 @@ precedence =(
 #  ---------------------------------------------------------------
 
 def p_programa_0(p):
-	'programa : funcion'
-	p[0] = Node( 'programa', [p[1]] )
+	'programa : funcionlista'
+	p[0] = p[1]
 
-def p_programa_1(p):
-	'programa : programa funcion'
-	p[0] = p[1].append(p[2])
+#  ---------------------------------------------------------------
+#  LISTA DE FUNCIONES
+#  ---------------------------------------------------------------
+
+def p_funcionlista_1(p):
+	'''funcionlista : funcion'''
+	p[0] = Node('programa',[p[1]])
+
+def p_funcionlista_2(p):
+	'''funcionlista : funcionlista funcion'''
+	p[1].append(p[2])
+	p[0] = p[1]	
+	funcstack = [ ]
 
 #  ---------------------------------------------------------------
 #  FUNCION

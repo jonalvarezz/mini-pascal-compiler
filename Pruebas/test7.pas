@@ -4,9 +4,9 @@ BEGIN
     i := 0 / n;
 	PRINT(" los numeors");
 	WHILE i < n DO
-	BEGIN
-		i := i+1
-	END;
+	 BEGIN
+	 	i := i+1
+	 END;
 	i := i+1
 END
 
