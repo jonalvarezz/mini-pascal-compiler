@@ -65,9 +65,10 @@ def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     if t.value.upper() in keywords:
         t.type = t.value.upper()
-    else: 
-        t.type = 'ID'
-        symtab.attach_symbol(t)
+    # Agrega el ID a la tabla de simbolos
+    # else: 
+    #     t.type = 'ID'
+    #     symtab.attach_symbol(t)
     return t
 
 def is_valid_STRING(t):

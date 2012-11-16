@@ -37,16 +37,16 @@ def is_symbol( name ) :
     return False
 
 # Busca un simbolo en todas las tablas de simbolos
-def get_symbol(name,level = 0,attr = None):
-	for i in range(len(_scopes)-(level+1),-1,-1):
-		s = _scopes[i]
-		try:
-			sym = s[name]
-			if attr:
+def get_symbol(name, level = 0, attr = None ):
+    for i in range( len(_scopes) - (level+1), -1, -1 ):
+        s = _scopes[i]
+        try:
+            sym = s[name]
+            if attr:
                 if hasattr(sym,attr):
                     return sym
-                else:
-                    return sym
+            else:
+                return sym
         except KeyError:
             pass
     return None

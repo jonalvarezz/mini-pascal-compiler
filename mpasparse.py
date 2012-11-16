@@ -1,9 +1,8 @@
 # Yacc
 import ply.yacc as yacc
 import sys
-
-# Get the token map from the lexer.  This is required.
 from mpaslex import tokens
+import symtab
 
 #  ---------------------------------------------------------------
 #  ABSTRACT SYNTAX TREE - NODE
@@ -95,8 +94,15 @@ def p_funcionlista_2(p):
 #  ---------------------------------------------------------------
 
 def p_funcion(p):
-	'funcion : FUN ID PARI argumento PARD locales BEGIN lineas END'
+	'funcion : fundecl ID PARI argumento PARD locales BEGIN lineas END'
 	p[0] = Node( 'funcion', [p[4], p[6], p[8]], p[2] )
+	# Elimina la tabla de simbolos actual, y restaura la anterior.
+	#symtab.pop_scope()
+
+def p_fundecl(p):
+	'fundecl : FUN'
+	# Crea una nueva tabla de simbolos
+	#symtab.new_scope()
 
 #  ---------------------------------------------------------------
 #  ARGUMENTO
