@@ -9,12 +9,13 @@ import symtab
 #  ---------------------------------------------------------------
 
 class Node:
-	def __init__(self, name, children = None, leaf = None):
+	def __init__(self, name, children = None, leaf = None, root = None):
 		self.name = name
 		if children == None:
 			children = []
 		self.children = children
 		self.leaf = leaf
+		self.root = root
 	
 	def __str__(self):
 		return "<%s>" % self.name
@@ -24,6 +25,12 @@ class Node:
 
 	def append(self, node):
 		self.children.append(node)
+
+	def get_root(self):
+		return self.root
+
+	def set_root(self, node):
+		self.root = node
 
 #  ---------------------------------------------------------------
 #  ABSTRACT SYNTAX TREE - TYPE SYSTEM
@@ -414,7 +421,7 @@ def p_vacio(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    print ("Syntax error in input!")
+    print ("Syntax error in input! Near '%s' line: %s" % (p.value,p.lineno))
 
 # Build the parser ------------------------------------------
 # Set up a logging object
