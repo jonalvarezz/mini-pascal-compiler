@@ -55,13 +55,13 @@ def t_INUM(t):
     return t
 
 def t_error_ID(t):
-    r'\d+[a-zA-Z_-]*'
+    r'\d+[a-zA-Z_]*'
     print ( ">>ERROR: Identificador mal formado linea %s" % t.lineno )
     t.lexer.skip(1)
 
 
 def t_ID(t):
-    r'[a-zA-Z_-][a-zA-Z0-9_-]*'
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
     if t.value in keywords:
         t.type = t.value
     return t
