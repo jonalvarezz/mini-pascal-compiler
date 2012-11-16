@@ -16,7 +16,7 @@ BEGIN
 	WHILE i < n-1 DO
 	BEGIN
 		WRITE(v[i]); PRINT(" ");
-		IF 0 < v[i]-v[i+1] THEN
+		IF 0 < v[i] + v[i+1] THEN
 		BEGIN
 			PRINT("Quicksort falló");
 			WRITE(i);

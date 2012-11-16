@@ -36,7 +36,7 @@ def dump_tree(node, indent = ""):
 		datatype = ""
 	else:
 		datatype = node.datatype
-        print( ' %s' % datatype )
+		print( ' %s' % datatype )
 	try:
 		if not node.leaf:
 			print ("%s %s  %s" % (indent, node.name, datatype))
@@ -53,7 +53,7 @@ def dump_tree(node, indent = ""):
 				dump_tree(c, indent + "  |-- ")
 
 	except AttributeError:
-		print( 'Error de atributo en el nodo: %s' % datatype )
+		print( 'Error de atributo en el nodo: %s, tipo de dato: %s' % (node, datatype))
 		
 
 #  ---------------------------------------------------------------
@@ -88,8 +88,7 @@ def p_funcionlista_1(p):
 def p_funcionlista_2(p):
 	'''funcionlista : funcionlista funcion'''
 	p[1].append(p[2])
-	p[0] = p[1]	
-	funcstack = [ ]
+	p[0] = p[1]
 
 #  ---------------------------------------------------------------
 #  FUNCION
