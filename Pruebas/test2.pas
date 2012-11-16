@@ -1,9 +1,9 @@
-FUN main()
-	v:INT[ 8192 ];
+fun main()
+	v:INT[8192];
 	i:INT;
 	n:INT;
-BEGIN
-	PRINT("Entre n: ");
+begin
+	print("Entre n: ");
 	READ(n);
 	i := 0 ;
 	WHILE i < n DO
@@ -19,7 +19,7 @@ BEGIN
 		IF 0 < v[i] + v[i+1] THEN
 		BEGIN
 			PRINT("Quicksort falló");
-			WRITE(i);
+			write(i);
 			PRINT("\n");
 			RETURN 0 
 		END

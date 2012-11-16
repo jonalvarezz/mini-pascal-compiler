@@ -14,7 +14,7 @@ import ply.lex as lex
 debug = False
 
 keywords = (
-    'INT', 'int', 'FLOAT', 'float', 'WHILE', 'while', 'IF', 'if', 'THEN', 'then', 'ELSE', 'else', 'BEGIN', 'begin', 'DO', 'do', 'END', 'end', 'PRINT', 'print', 'WRITE', 'write', 'READ', 'read', 'SKIP', 'skip', 'RETURN', 'return', 'BREAK', 'break', 'AND', 'and', 'OR', 'or', 'NOT', 'not', 'FUN', 'fun', 'ID', 'id',
+    'INT', 'FLOAT', 'WHILE', 'IF', 'THEN', 'ELSE', 'BEGIN', 'DO', 'END', 'PRINT', 'WRITE', 'READ', 'SKIP', 'RETURN', 'BREAK', 'AND', 'OR', 'NOT', 'FUN', 'ID',
 )
 
 tokens = keywords + (
@@ -62,13 +62,12 @@ def t_error_ID(t):
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value in keywords:
-        t.type = t.value
+    if t.value.upper() in keywords:
+        t.type = t.value.upper()
     return t
 
 def is_valid_STRING(t):
     s = str(t.value)
-    n = len(s)
     i = 0
     #Escapes no validos.
     s = s[1:-1] #avoid '"'
