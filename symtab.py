@@ -1,12 +1,24 @@
-_scopes = [ ]
+_scopes = []
 current = None
 
-class Symbol: 
-	pass
+class Symbol:
+    def __init__(self,name):
+        self.name=name
+        self.numpar=[]
+
+    def __repr__(self):
+        a= self.name
+        return a
+
+    def __str__(self):
+        return self.name
+
+    def append(self,num):
+        self.numpar.append(num)
 
 def new_scope():
 	global current
-	current = { }
+	current = {}
 	_scopes.append(current)
 	return current
 
@@ -22,9 +34,10 @@ def get_symbol(name,level = 0,attr = None):
 		try:
 			sym = s[name]
 			if attr:
-                if hasattr(sym,attr): return sym
-            else:
-                return sym
+                if hasattr(sym,attr):
+                    return sym
+                else:
+                    return sym
         except KeyError:
             pass
     return None
