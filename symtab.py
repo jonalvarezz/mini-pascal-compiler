@@ -39,7 +39,9 @@ def is_symbol( name ) :
 # Busca un simbolo en todas las tablas de simbolos
 def get_symbol(name, level = 0, attr = None ):
     for i in range( len(_scopes) - (level+1), -1, -1 ):
+    #    print "\n* %s *\n" % dir(_scopes)
         s = _scopes[i]
+
         try:
             sym = s[name]
             if attr:
@@ -51,13 +53,15 @@ def get_symbol(name, level = 0, attr = None ):
             pass
     return None
 
+
 # Agrega un nuevo simbolo
 def add_symbol(name):
-    s = Symbol()
+    s = Symbol(name)
     s.name = name
     s.scope = current
     s.level = len(_scopes) - 1
     current[name] = s
+    print (s.name)
     return s
 
 # Instala un simbol en el ambito actual
@@ -71,3 +75,86 @@ def attach_symbol(t):
         s = add_symbol(t.value)
         s.lineno = t.lineno
     t.symtab = s
+
+    
+#......................................funciones Propias..............................
+
+
+# Busca identificador en la tabla actual de simbolos
+#def findl(name):
+#    for n in range(len(scopes)-1,-1,-1):
+#        for s in scopes[n]:
+#            if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
+#                return None
+#    return last[-1]
+
+
+
+# Busca identificador en las tabla de simbolos
+def find(name):
+    for n in range(len(_scopes)-1,-1,-1):
+        for s in _scopes[n]:
+            if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
+                return s
+    return None
+#..........................................................................
+# Para ponerle el atributo 'class'=ident y 'typ' a cada identificador que no sea una funcion
+def banf(name,typ=None):
+    for s in current:
+        if s.name == name:
+            if not (hasattr(s,'clase') or hasattr(s,'typ')):
+                s.clase = 'ident'
+                s.typ=typ
+                return None
+            else:
+                #print "#REDECLARADO# %s" % s.name
+                return s
+
+# Para ponerle el atributo 'class'=ident y 'typ' a cada identificador que no sea una funcion
+def banf2(name,typ=None):
+    for s in current:
+        if s.name == name:
+            if not (hasattr(s,'clase') or hasattr(s,'typ')):
+                s.clase = 'ident'
+                s.typ=typ
+            if hasattr(s,'typ'):
+                if s.typ != typ:
+                    return None
+            return s
+
+
+
+#-----------------------------------inecesarios con banf------------------
+
+# Busca identificador de un simbolo en todas las tablas de simbolos
+def get_type(name, level = 0, attr = None ):
+    for i in range( len(_scopes) - (level+1), -1, -1 ):
+        s = _scopes[i]
+        try:
+            sym = s[name]
+            if attr:
+                if hasattr(sym,attr):
+                    ty = s[type]
+                    return ty
+            else:
+                return ty
+        except KeyError:
+            pass
+    return None
+
+# buscar linea 
+def get_linea(name, level = 0, attr = None ):
+    for i in range( len(_scopes) - (level+1), -1, -1 ):
+        s = _scopes[i]
+        try:
+            sym = s[name]
+            if attr:
+                if hasattr(sym,attr):
+                    ly = s[lineno]
+                    return ly
+            else:
+                return ly
+        except KeyError:
+            pass
+    return None 
+
