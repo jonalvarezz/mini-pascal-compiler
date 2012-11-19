@@ -75,6 +75,7 @@ def attach_symbol(t):
         s = add_symbol(t.value)
         s.lineno = t.lineno
     t.symtab = s
+<<<<<<< HEAD
     
 #......................................funciones Propias..............................
 
@@ -86,11 +87,27 @@ def attach_symbol(t):
 #            if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
 #                return None
 #    return last[-1]
+=======
+
+
+
+# Busca identificador en la tabla actual de simbolos
+def findl(name):
+    for n in range(len(scopes)-1,-1,-1):
+        for s in scopes[n]:
+            if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
+                return None
+    return last[-1]
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 
 
 # Busca identificador en las tabla de simbolos
 def find(name):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
     for n in range(len(_scopes)-1,-1,-1):
         for s in _scopes[n]:
             if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
@@ -155,5 +172,9 @@ def get_linea(name, level = 0, attr = None ):
                 return ly
         except KeyError:
             pass
+<<<<<<< HEAD
     return None 
    
+=======
+    return None    
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620

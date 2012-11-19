@@ -173,6 +173,7 @@ def p_loc_1(p):
 def p_dec(p):
 	'dec : ID DPUN type'
 	p[0] = Node( 'declaracion', [p[3]], p[1] )
+<<<<<<< HEAD
 	p[0].name = p[1]
 	p[0].value = p[1]
 #	p[0].typ=p[3].typ
@@ -182,6 +183,15 @@ def p_dec(p):
 
 
 
+=======
+#	p[0].name = p[1]
+#	p[0].value = p[1]
+#	p[0].typ=p[3].typ
+
+#	a=symtab.banf(p[0].name,p[3].typ)
+#	if a :
+#		print "#Error# redeclaracion de identificador '%s' en linea %i" % (p[0].name,a.lineno)
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 #  ---------------------------------------------------------------
 #  LINEAS
@@ -219,9 +229,13 @@ def p_linea_3(p):
 def p_linea_4(p):
 	'linea : ID ASIG expre'
 	p[0] = Node( ':=', [p[3]], p[1] )
+<<<<<<< HEAD
 	p[0].assign = 1
 #	print "\n* %s *\n" % dir(p[0].name)
 #	a=symtab.find(p[1].name)
+=======
+#	a=symtab.findl(p[1].name)
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 #	if hasattr(p[1], "typ"):
 #		typ=p[1].typ
 #	else:
@@ -280,14 +294,21 @@ def p_else_1(p):
 def p_location_1(p):
 	'location : ID'
 	p[0] = Node('id',[],p[1])
+<<<<<<< HEAD
 	p[0].name = p[1]
 	p[0].value = p[1]
 
 # por el error ya mencionado no se pudo comprobar el funcionamiento
+=======
+#	p[0] = Node('',[],p[1])
+#	p[0].name = p[1]
+#	p[0].value = p[1]
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 def p_location_2(p):
 	'location : ID CORI expre CORD'
 	p[0] = Node('id[]',[p[3]],p[1])
+<<<<<<< HEAD
 	p[0].name = p[1]
 	p[0].value = p[1]
 
@@ -296,7 +317,16 @@ def p_location_2(p):
 			print "#Error# El indice de un vector debe ser entero '%s'" % f.name
 		else:
 			p[0].typ = p[3].typ
+=======
+#	p[0].name = p[1]
+#	p[0].value = p[1]
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
+#	if hasattr(p[3],'typ'):
+#		if p[3].typ != 'int':
+#			print "#Error# El indice de un vector debe ser entero '%s'" % f.name
+#		else:
+#			p[0].typ = p[3].typ
 #  ---------------------------------------------------------------
 #  RELACION
 #  ---------------------------------------------------------------
@@ -358,12 +388,20 @@ def p_type_i(p):
 def p_type_fa(p):
 	'type : FLOAT CORI expre CORD'
 	p[0] = Node('type_float_Array', [p[3]])
+<<<<<<< HEAD
  	p[0].typ="int["+str(p[3].value)+"]_type"
+=======
+#   p[0].typ='float['+str(p[3].value)+']_type'
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 def p_type_ia(p):
 	'type : INT CORI expre CORD'
 	p[0] = Node('type_int_Array', [p[3]])
+<<<<<<< HEAD
 	p[0].typ="int["+str(p[3].value)+"]_type"
+=======
+#	p[0].typ='int['+str(p[3].value)+']_type'
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 #  ---------------------------------------------------------------
 #  EXPRLIST
@@ -449,10 +487,47 @@ def p_expre_call(p):
 #		p[0].name = p[1]
 #		p[0].value = p[1]
 
+#	f=symtab.find(p[1])
+
+#	args = len(p[3].children)
+#	if 	p[3].leaf:
+#		args += 1
+
+#	if not f:
+#		print "Error Funcion no declarada '%s' " % (p[1]),
+#		lf = get_linea(p[1])
+#		print "en la linea '%s'" % lf
+#	else:
+#		if args != len(f.numpar):
+#			print "#Error# Numero de argumentos erroneo en '%s'" % f.name
+#		else:
+#			if 	p[3].leaf:
+				#print "adadsdsad: ", p[3].typ , ":::" , f.name,f.numpar
+#				if p[3].typ != f.numpar[0]:
+#					print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
+#				else:
+#					for i in range(0,len(p[3].children)):
+#						if hasattr(p[3].children[i],'typ'):
+#							if p[3].children[i].typ != f.numpar[i+1]:
+#								print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
+#								break
+#	if hasattr(p[3],'typ'):
+#		p[0] = Node('',[p[3]],p[1])
+#		p[0].name = p[1]
+#		p[0].value = p[1]
+#		p[0].call = 1
+#		p[0].typ = p[3].typ
+#	else:
+#		p[0] = Node('',[p[3]],p[1])
+#		p[0].call = 1
+#		p[0].name = p[1]
+#		p[0].value = p[1]
+
 def p_expre_id(p):
 	'expre : ID'
 	p[0] = Node('id', [], p[1])
 	p[0].value = p[1]
+<<<<<<< HEAD
 	# si esta en la tabla de simbolos
 	f = symtab.get_symbol(p[1])
 	if f:
@@ -460,17 +535,34 @@ def p_expre_id(p):
 #		p[1].typ = f
 	else:
 		print ("#ERROR# no esta declarada %s" %p[0].value)	
+=======
+	f = symtab.get_symbol(p[1])
+#	if f:
+		#print "\n* %s *\n" % dir(f)
+#		p[0].typ = f
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 
 def p_expre_array(p):
 	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
 	#indices enteros
+<<<<<<< HEAD
 	if hasattr(p[3],'typ') & hasattr(p[3],'value'):
 			if p[3].typ != 'int_type':
 				print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
 			else:
 				p[0].typ = "int["+str(p[3].value)+"]_type"
 	else:
+=======
+	if hasattr(p[3],'typ'):
+	    if hasattr(p[3],'value'):
+			
+			if p[3].typ != 'int':
+				print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
+			else:
+				p[0].typ = "int["+str(p[3].value)+"]_type"
+	    else:
+>>>>>>> 18a0fd423ddc96184a2a8fad3b8174e2edabf620
 		print ("#Error# no se le encuentra valor")
 	
 
