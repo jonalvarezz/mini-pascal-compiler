@@ -9,13 +9,12 @@ import mpastype
 #  ---------------------------------------------------------------
 
 class Node:
-	def __init__(self, name, children = None, leaf = None, root = None):
+	def __init__(self, name, children = None, leaf = None):
 		self.name = name
 		if children == None:
 			children = []
 		self.children = children
 		self.leaf = leaf
-		self.root = root
 	
 	def __str__(self):
 		return "<%s>" % self.name
@@ -25,12 +24,6 @@ class Node:
 
 	def append(self, node):
 		self.children.append(node)
-
-	def get_root(self):
-		return self.root
-
-	def set_root(self, node):
-		self.root = node
 
 #  ---------------------------------------------------------------
 #  ABSTRACT SYNTAX TREE - TYPE SYSTEM
@@ -103,7 +96,7 @@ def p_funcion(p):
 	'funcion : fundecl ID PARI argumento PARD locales BEGIN lineas END'
 	p[0] = Node( 'funcion', [p[4], p[6], p[8]], p[2] )
 	# Elimina la tabla de simbolos actual, y restaura la anterior.
-#	symtab.pop_scope()
+	symtab.pop_scope()
 
 def p_fundecl(p):
 	'fundecl : FUN'
@@ -183,10 +176,12 @@ def p_dec(p):
 
 	p[0].name = p[1]
 	p[0].value = p[1]
-#	p[0].typ=p[3].typ
-#	a=symtab.banf(p[0].name,p[3].typ)
-#	if a :
-#		print "#Error# redeclaracion de identificador '%s' en linea %i" % (p[0].name,a.lineno)
+	p[0].typ = p[3].typ
+
+	a = symtab.setid( p[0].name, p[3].typ )
+	if not a :
+		dir ( p[0] )
+		print ( ">>ERROR: redeclaracion del identificador '%s'" % (p[0].name) )
 
 
 #  ---------------------------------------------------------------
@@ -227,6 +222,12 @@ def p_linea_4(p):
 	p[0] = Node( ':=', [p[3]], p[1] )
 
 	p[0].assign = 1
+
+	# Validacion id no declarado.
+	data = symtab.find_id( p[1] )
+	if not data :
+		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+
 #	print "\n* %s *\n" % dir(p[0].name)
 #	a=symtab.find(p[1].name)
 
@@ -291,28 +292,31 @@ def p_location_1(p):
 	p[0].name = p[1]
 	p[0].value = p[1]
 
-# por el error ya mencionado no se pudo comprobar el funcionamiento
+	# Validacion id no declarado.
+	data = symtab.find_id( p[1] )
+	if not data :
+		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
 
 
 def p_location_2(p):
 	'location : ID CORI expre CORD'
-	p[0] = Node('id[]',[p[3]],p[1])
+	p[0] = Node('array',[p[3]],p[1])
 
-	p[0].name = p[1]
 	p[0].value = p[1]
 
+	# Solo se esperan numeros enteros
 	if hasattr(p[3],'typ'):
 		if p[3].typ != 'int':
-			print "#Error# El indice de un vector debe ser entero '%s'" % f.name
+			print ("#Error# El indice de un vector %s debe ser entero." % p[1])
 		else:
 			p[0].typ = p[3].typ
 
+	# Validacion id no declarado.
+	data = symtab.find_id( p[1] )
+	if not data :
+		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
 
-#	if hasattr(p[3],'typ'):
-#		if p[3].typ != 'int':
-#			print "#Error# El indice de un vector debe ser entero '%s'" % f.name
-#		else:
-#			p[0].typ = p[3].typ
+
 #  ---------------------------------------------------------------
 #  RELACION
 #  ---------------------------------------------------------------
@@ -364,24 +368,24 @@ def p_relacion_parent(p):
 def p_type_f(p):
 	'type : FLOAT'
 	p[0] = Node('type_float',[], p[1])
-	p[0].typ = "float_type"
+	p[0].typ = "float"
 
 def p_type_i(p):
 	'type : INT'
 	p[0] = Node('type_int',[],p[1])
-	p[0].typ = "int_type"
+	p[0].typ = "int"
 
 def p_type_fa(p):
 	'type : FLOAT CORI expre CORD'
 	p[0] = Node('type_float_Array', [p[3]])
 
- 	p[0].typ="int["+str(p[3].value)+"]_type"
+	p[0].typ= "float[" + str(p[3].value) + "]"
 
 
 def p_type_ia(p):
 	'type : INT CORI expre CORD'
 	p[0] = Node('type_int_Array', [p[3]])
-	p[0].typ="int["+str(p[3].value)+"]_type"
+	p[0].typ= "int[" + str(p[3].value) + "]"
 
 #  ---------------------------------------------------------------
 #  EXPRLIST
@@ -430,104 +434,65 @@ def p_expre_masu(p):
 def p_expre_call(p):
 	'expre : ID PARI exprelist PARD'
 	p[0] = Node( 'call', [p[3]], p[1] )
-	f=symtab.find(p[1])
-	print f
-	args = len(p[3].children)
-	print ("la funcion tiene '%s' argumentos" %args)
-	if 	p[3].leaf:
-		args += 1
+	# f=symtab.find(p[1])
+	# print ( f )
+	# args = len(p[3].children)
+	# print ("la funcion tiene '%s' argumentos" %args)
+	# if 	p[3].leaf:
+	# 	args += 1
 
-	if not f:
-		print "Error Funcion no declarada '%s'  " % (p[1]),
-#		lf = get_linea(p[1])
-#		print "en la linea '%s'" % lf
-	else:
-		if args != len(f.numpar):
-			print "#Error# Numero de argumentos erroneo en '%s'" % f.name
-#		else:
-#			if 	p[3].leaf:
-				#print "adadsdsad: ", p[3].typ , ":::" , f.name,f.numpar
-#				if p[3].typ != f.numpar[0]:
-#					print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-#				else:
-#					for i in range(0,len(p[3].children)):
-#						if hasattr(p[3].children[i],'typ'):
-#							if p[3].children[i].typ != f.numpar[i+1]:
-#								print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-#								break
-#	if hasattr(p[3],'typ'):
-#		p[0] = Node('',[p[3]],p[1])
-#		p[0].name = p[1]
-#		p[0].value = p[1]
-#		p[0].call = 1
-#		p[0].typ = p[3].typ
-#	else:
-#		p[0] = Node('',[p[3]],p[1])
-#		p[0].call = 1
-#		p[0].name = p[1]
-#		p[0].value = p[1]
-
-#	f=symtab.find(p[1])
-
-#	args = len(p[3].children)
-#	if 	p[3].leaf:
-#		args += 1
-
-#	if not f:
-#		print "Error Funcion no declarada '%s' " % (p[1]),
-#		lf = get_linea(p[1])
-#		print "en la linea '%s'" % lf
-#	else:
-#		if args != len(f.numpar):
-#			print "#Error# Numero de argumentos erroneo en '%s'" % f.name
-#		else:
-#			if 	p[3].leaf:
-				#print "adadsdsad: ", p[3].typ , ":::" , f.name,f.numpar
-#				if p[3].typ != f.numpar[0]:
-#					print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-#				else:
-#					for i in range(0,len(p[3].children)):
-#						if hasattr(p[3].children[i],'typ'):
-#							if p[3].children[i].typ != f.numpar[i+1]:
-#								print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-#								break
-#	if hasattr(p[3],'typ'):
-#		p[0] = Node('',[p[3]],p[1])
-#		p[0].name = p[1]
-#		p[0].value = p[1]
-#		p[0].call = 1
-#		p[0].typ = p[3].typ
-#	else:
-#		p[0] = Node('',[p[3]],p[1])
-#		p[0].call = 1
-#		p[0].name = p[1]
-#		p[0].value = p[1]
+	# if not f:
+	# 	print "Error Funcion no declarada '%s'  " % (p[1]),
+	# 	lf = get_linea(p[1])
+	# 	print "en la linea '%s'" % lf
+	# else:
+	# 	if args != len(f.numpar):
+	# 		print "#Error# Numero de argumentos erroneo en '%s'" % f.name
+	# 	else:
+	# 		if 	p[3].leaf:
+	# 			print "adadsdsad: ", p[3].typ , ":::" , f.name,f.numpar
+	# 			if p[3].typ != f.numpar[0]:
+	# 				print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
+	# 			else:
+	# 				for i in range(0,len(p[3].children)):
+	# 					if hasattr(p[3].children[i],'typ'):
+	# 						if p[3].children[i].typ != f.numpar[i+1]:
+	# 							print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
+	# 							break
+	# if hasattr(p[3],'typ'):
+	# 	p[0] = Node('',[p[3]],p[1])
+	# 	p[0].name = p[1]
+	# 	p[0].value = p[1]
+	# 	p[0].call = 1
+	# 	p[0].typ = p[3].typ
+	# else:
+	# 	p[0] = Node('',[p[3]],p[1])
+	# 	p[0].call = 1
+	# 	p[0].name = p[1]
+	# 	p[0].value = p[1]
 
 def p_expre_id(p):
 	'expre : ID'
 	p[0] = Node('id', [], p[1])
 	p[0].value = p[1]
-	# si esta en la tabla de simbolos
-	f = symtab.get_symbol(p[1])
-	if f:
-		print "\n* %s *\n" % dir(f)
-#		p[1].typ = f
-	else:
-		print ("#ERROR# no esta declarada %s" %p[0].value)	
 
+	# Validacion id no declarado.
+	data = symtab.find_id( p[1] )
+	if not data :
+		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
 
 def p_expre_array(p):
 	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
 	#indices enteros
-	if hasattr(p[3],'typ') & hasattr(p[3],'value'):
-			if p[3].typ != 'int_type':
-				print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
-			else:
-				p[0].typ = "int["+str(p[3].value)+"]_type"
-	else:
+	# if hasattr(p[3],'typ') & hasattr(p[3],'value'):
+	# 		if p[3].typ != 'int_type':
+	# 			print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
+	# 		else:
+	# 			p[0].typ = "int["+str(p[3].value)+"]_type"
+	# else:
 
-		print ("#Error# no se le encuentra valor")
+	# 	print ("#Error# no se le encuentra valor")
 	
 
 
@@ -535,26 +500,26 @@ def p_expre_fnum(p):
 	'expre : FNUM'
 	p[0]= Node('numero_f',[], p[1])
 	p[0].value = p[1]
-	p[0].typ = "float_type"
+	p[0].typ = "float"
 
 def p_expre_inum(p):
 	'expre : INUM'
 	p[0]= Node('numero',[],p[1])
 	p[0].value = p[1]
-	p[0].typ = "int_type"
+	p[0].typ = "int"
 
 def p_expre_cast_int(p):
 	'expre : INT PARI expre PARD'
 	p[0] = Node('cast_int',[p[3]],p[1])
-	p[0].value = p[p[3].value]
-	p[0].typ = "int_type"
+	p[0].value = p[3].value
+	p[0].typ = "int"
 
 
 def p_expre_cast_float(p):
 	'expre : FLOAT PARI expre PARD'
 	p[0] = Node('cast_float',[p[3]],p[1])
-	p[0].value = p[p[3].value]
-	p[0].typ = "float_type"
+	p[0].value = p[3].value
+	p[0].typ = "float"
 
 
 # -----------------------------------------------------------------------------

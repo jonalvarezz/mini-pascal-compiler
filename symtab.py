@@ -18,17 +18,21 @@ class Symbol:
 
 # Crea un nueva tabla
 def new_scope():
-	global current
-	current = {}
-	_scopes.append(current)
-	return current
+    global current
+    current = {}
+    _scopes.append(current)
+    get_scopes()
+    return current
 
 # Elimina la tabla actual y restaura la anterior.
 def pop_scope():
-	global current
-	r = _scopes.pop()
-	current = _scopes[-1]
-	return r
+    global current
+    r = _scopes.pop()
+    if len(_scopes) > 0 :
+        current = _scopes[-1]
+    else :
+        print ( "***Pila de scopes vaceada***" )
+    return r
 
 # Busca un simbolo en la tabla actual
 def is_symbol( name ) :
@@ -79,49 +83,32 @@ def attach_symbol(t):
     
 #......................................funciones Propias..............................
 
-
-# Busca identificador en la tabla actual de simbolos
-#def findl(name):
-#    for n in range(len(scopes)-1,-1,-1):
-#        for s in scopes[n]:
-#            if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
-#                return None
-#    return last[-1]
-
-
-
-# Busca identificador en las tabla de simbolos
+# Busca identificador en todas las tabla de simbolos
 def find(name):
     for n in range(len(_scopes)-1,-1,-1):
         for s in _scopes[n]:
             if s.name==name and (hasattr(s,'typ') or hasattr(s,'clase')):
                 return s
     return None
+
+def find_id( name ) :
+    data = current.get( name, False )
+    if not hasattr(data,'typ') :
+        return False
+    else : 
+        return True
+
 #..........................................................................
-# Para ponerle el atributo 'class'=ident y 'typ' a cada identificador que no sea una funcion
-def banf(name,typ=None):
-    for s in current:
-        if s.name == name:
-            if not (hasattr(s,'clase') or hasattr(s,'typ')):
-                s.clase = 'ident'
-                s.typ=typ
-                return None
-            else:
-                #print "#REDECLARADO# %s" % s.name
-                return s
 
-# Para ponerle el atributo 'class'=ident y 'typ' a cada identificador que no sea una funcion
-def banf2(name,typ=None):
-    for s in current:
-        if s.name == name:
-            if not (hasattr(s,'clase') or hasattr(s,'typ')):
-                s.clase = 'ident'
-                s.typ=typ
-            if hasattr(s,'typ'):
-                if s.typ != typ:
-                    return None
-            return s
-
+def setid( name, typ=None ) :
+    sname = current.get( name, False )
+    if not ( hasattr(sname,'clase') or hasattr(sname,'typ') ):
+        sname.clase = 'id'
+        sname.typ=typ
+        return True
+    # Re declaracion.
+    else:
+        return False
 
 
 #-----------------------------------inecesarios con banf------------------
@@ -158,3 +145,9 @@ def get_linea(name, level = 0, attr = None ):
             pass
     return None 
 
+def get_scopes():
+    global current
+    print ( "--------------------------------")
+    print( "scopes: %i" % len(_scopes) )
+    for i in _scopes :
+        print ( i )
