@@ -228,23 +228,6 @@ def p_linea_4(p):
 	if not data :
 		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
 
-#	print "\n* %s *\n" % dir(p[0].name)
-#	a=symtab.find(p[1].name)
-
-#	if hasattr(p[1], "typ"):
-#		typ=p[1].typ
-#	else:
-#		typ=None
-
-#	s=symtab.banf2(p[1].name,typ)
-#	if not s:
-#		pass
-		###print "#Error# Assign '%s' error de tipos" % (p[1].name)
-
-#	if a:
-#		print "#Error# variable no declarada '%s' en la linea %i " % (p[1].name,a.lineno)
-
-
 def p_linea_5(p):
 	'linea : RETURN expre'
 	p[0] = Node( 'return', [p[2]], p[1] )
