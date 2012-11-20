@@ -177,7 +177,6 @@ def p_dec(p):
 	p[0].name = p[1]
 	p[0].value = p[1]
 	p[0].typ = p[3].typ
-
 	a = symtab.setid( p[0].name, p[3].typ )
 	if not a :
 		dir ( p[0] )
@@ -227,6 +226,12 @@ def p_linea_4(p):
 	data = symtab.find_id( p[1] )
 	if not data :
 		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+
+	# Comprobacion asignacion de tipo
+	p1 = symtab.get_id( p[1] )
+	typ = symtab.comparate_types(p1, p[3])
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: ")
 
 def p_linea_5(p):
 	'linea : RETURN expre'
@@ -391,82 +396,72 @@ def p_exprelist_(p):
 def p_expre_mas(p):
 	'expre : expre MAS expre'
 	p[0]= Node('+',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
+	
 
 def p_expre_menos(p):
 	'expre : expre MENOS expre'
 	p[0]= Node('-',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
  
 def p_expre_mul(p):
 	'expre : expre MUL expre'
 	p[0]= Node('*',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
 
 def p_expre_div(p):
 	'expre : expre DIV expre'
 	p[0]= Node('/',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
  
 def p_expre_menosu(p):
 	'expre : MENOS expre'
 	p[0]= Node('umenos',[p[2]])
-#	requiere asignacion de tipo pero todavia no se como implementarla
+	p[0].typ = p[2].typ
 
 def p_expre_masu(p):
 	'expre : MAS expre'
 	p[0]= Node('umas',[p[2]])
-#	requiere asignacion de tipo pero todavia no se como implementarla
+	p[0].typ = p[2].typ
 
 def p_expre_call(p):
 	'expre : ID PARI exprelist PARD'
 	p[0] = Node( 'call', [p[3]], p[1] )
-	# f=symtab.find(p[1])
-	# print ( f )
-	# args = len(p[3].children)
-	# print ("la funcion tiene '%s' argumentos" %args)
-	# if 	p[3].leaf:
-	# 	args += 1
-
-	# if not f:
-	# 	print "Error Funcion no declarada '%s'  " % (p[1]),
-	# 	lf = get_linea(p[1])
-	# 	print "en la linea '%s'" % lf
-	# else:
-	# 	if args != len(f.numpar):
-	# 		print "#Error# Numero de argumentos erroneo en '%s'" % f.name
-	# 	else:
-	# 		if 	p[3].leaf:
-	# 			print "adadsdsad: ", p[3].typ , ":::" , f.name,f.numpar
-	# 			if p[3].typ != f.numpar[0]:
-	# 				print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-	# 			else:
-	# 				for i in range(0,len(p[3].children)):
-	# 					if hasattr(p[3].children[i],'typ'):
-	# 						if p[3].children[i].typ != f.numpar[i+1]:
-	# 							print "#Error# Tipos de argumentos erroneo en'%s'" % f.name
-	# 							break
-	# if hasattr(p[3],'typ'):
-	# 	p[0] = Node('',[p[3]],p[1])
-	# 	p[0].name = p[1]
-	# 	p[0].value = p[1]
-	# 	p[0].call = 1
-	# 	p[0].typ = p[3].typ
-	# else:
-	# 	p[0] = Node('',[p[3]],p[1])
-	# 	p[0].call = 1
-	# 	p[0].name = p[1]
-	# 	p[0].value = p[1]
+	p[0].typ = 'int'
 
 def p_expre_id(p):
 	'expre : ID'
 	p[0] = Node('id', [], p[1])
 	p[0].value = p[1]
-
+	
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
 	if not data :
 		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+ 
+	# tipo de dato
+	typ = symtab.find_type(p[1])
+	if typ :
+		p[0].typ = typ
+
 
 def p_expre_array(p):
 	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
+	p[0].typ = "int["+str(p[3].value)+"]"
+
 	#indices enteros
 	# if hasattr(p[3],'typ') & hasattr(p[3],'value'):
 	# 		if p[3].typ != 'int_type':

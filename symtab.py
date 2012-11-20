@@ -21,7 +21,6 @@ def new_scope():
     global current
     current = {}
     _scopes.append(current)
-    get_scopes()
     return current
 
 # Elimina la tabla actual y restaura la anterior.
@@ -52,7 +51,7 @@ def get_symbol(name, level = 0, attr = None ):
                 if hasattr(sym,attr):
                     return sym
             else:
-                return sym
+                return symname
         except KeyError:
             pass
     return None
@@ -65,7 +64,6 @@ def add_symbol(name):
     s.scope = current
     s.level = len(_scopes) - 1
     current[name] = s
-    print (s.name)
     return s
 
 # Instala un simbol en el ambito actual
@@ -91,6 +89,10 @@ def find(name):
                 return s
     return None
 
+def get_id(name) :
+    return current.get(name, False)
+
+
 def find_id( name ) :
     data = current.get( name, False )
     if not hasattr(data,'typ') :
@@ -98,13 +100,20 @@ def find_id( name ) :
     else : 
         return True
 
+def find_type( name ) :
+    data = current.get( name, False )
+    return data.typ
+
 #..........................................................................
 
 def setid( name, typ=None ) :
     sname = current.get( name, False )
-    if not ( hasattr(sname,'clase') or hasattr(sname,'typ') ):
+    
+    if not hasattr(sname,'typ') :
         sname.clase = 'id'
         sname.typ=typ
+        current[name].numpar = sname
+
         return True
     # Re declaracion.
     else:
@@ -151,3 +160,12 @@ def get_scopes():
     print( "scopes: %i" % len(_scopes) )
     for i in _scopes :
         print ( i )
+
+
+def comparate_types( n1, n2 ) :
+    if hasattr(n1, 'typ') and hasattr(n2, 'typ'):    
+        if n1.typ == n2.typ :
+            return n1.typ
+        else :
+            return 'error'
+
