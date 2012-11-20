@@ -51,7 +51,7 @@ def get_symbol(name, level = 0, attr = None ):
                 if hasattr(sym,attr):
                     return sym
             else:
-                return symname
+                return sym[name]
         except KeyError:
             pass
     return None
@@ -118,41 +118,6 @@ def setid( name, typ=None ) :
     # Re declaracion.
     else:
         return False
-
-
-#-----------------------------------inecesarios con banf------------------
-
-# Busca identificador de un simbolo en todas las tablas de simbolos
-def get_type(name, level = 0, attr = None ):
-    for i in range( len(_scopes) - (level+1), -1, -1 ):
-        s = _scopes[i]
-        try:
-            sym = s[name]
-            if attr:
-                if hasattr(sym,attr):
-                    ty = s[type]
-                    return ty
-            else:
-                return ty
-        except KeyError:
-            pass
-    return None
-
-# buscar linea 
-def get_linea(name, level = 0, attr = None ):
-    for i in range( len(_scopes) - (level+1), -1, -1 ):
-        s = _scopes[i]
-        try:
-            sym = s[name]
-            if attr:
-                if hasattr(sym,attr):
-                    ly = s[lineno]
-                    return ly
-            else:
-                return ly
-        except KeyError:
-            pass
-    return None 
 
 def get_scopes():
     global current

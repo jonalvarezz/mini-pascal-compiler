@@ -34,7 +34,9 @@ def dump_tree(node, indent = ""):
 	if not hasattr(node, "typ"):
 		datatype = ""
 	else:
-		if node.typ[1] :
+		if node.typ == 'error':
+			datatype = node.typ
+		elif node.typ[1] :
 			datatype = str(node.typ[0]) + "_" + str(node.typ[1])
 		else:
 			datatype = node.typ[0]
@@ -293,14 +295,19 @@ def p_location_2(p):
 	'location : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
 
+	# Tipo del id
+	typ = symtab.find_type(p[1])
+	try:
+		p[0].typ = (typ[0], p[3].value)
+	except AttributeError:
+		p[0].typ= (typ[0], "unknow")
+		pass
 	p[0].value = p[1]
 
-	# Solo se esperan numeros enteros
+	# Indices enteros
 	if hasattr(p[3],'typ'):
 		if p[3].typ[0] != 'int':
-			print ("#Error# El indice de un vector %s debe ser entero." % p[1])
-		else:
-			p[0].typ = p[3].typ
+			print (">>ERROR:  El indice del array %s debe ser un valor entero" % typ[0])
 
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
@@ -312,57 +319,25 @@ def p_location_2(p):
 #  RELACION
 #  ---------------------------------------------------------------
 
-def p_relacion_lt(p):
-	'relacion : expre LT expre'
-	p[0] = Node('<',[p[1],p[3]])
+def p_relacion(p):
+	"""relacion : expre LT expre
+				| expre LE expre
+				| expre GT expre
+				| expre GE expre
+				| expre EQ expre
+				| expre NE expre
+	"""
+	p[0] = Node(p[2], [p[1], p[3]])
 	typ = symtab.comparate_types(p[1], p[3])
 	p[0].typ = typ
 	if typ == 'error' :
 		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
-def p_relacion_le(p):
-	'relacion : expre LE expre'
-	p[0] = Node('<=',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
-
-def p_relacion_gt(p):
-	'relacion : expre GT expre'
-	p[0] = Node('>',[p[1],p[3]])
-
-def p_relacion_ge(p):
-	'relacion : expre GE expre'
-	p[0] = Node('>=',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
-
-def p_relacion_eq(p):
-	'relacion : expre EQ expre'
-	p[0] = Node('=',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
-
-def p_relacion_ne(p):
-	'relacion : expre NE expre'
-	p[0] = Node('!=',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
-
-def p_relacion_and(p):
-	'relacion : relacion AND relacion'
-	p[0] = Node('and',[p[1],p[3]])
-
-def p_relacion_or(p):
-	'relacion : relacion OR relacion'
-	p[0] = Node('or',[p[1],p[3]])
+def p_relacion_1(p):
+	"""relacion : relacion AND relacion
+				| relacion OR relacion
+	"""
+	p[0] = Node(p[2], [p[1],p[3]])
 
 def p_relacion_not(p):
 	'relacion : NOT relacion'
@@ -423,34 +398,13 @@ def p_exprelist_(p):
 #  EXPRE
 #  ---------------------------------------------------------------
 
-def p_expre_mas(p):
-	'expre : expre MAS expre'
-	p[0]= Node('+',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
-	
-
-def p_expre_menos(p):
-	'expre : expre MENOS expre'
-	p[0]= Node('-',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
- 
-def p_expre_mul(p):
-	'expre : expre MUL expre'
-	p[0]= Node('*',[p[1],p[3]])
-	typ = symtab.comparate_types(p[1], p[3])
-	p[0].typ = typ
-	if typ == 'error' :
-		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
-
-def p_expre_div(p):
-	'expre : expre DIV expre'
-	p[0]= Node('/',[p[1],p[3]])
+def p_expre(p):
+	"""expre : expre MAS expre
+			 | expre MENOS expre
+			 | expre MUL expre
+			 | expre DIV expre
+	"""
+	p[0]= Node(p[2], [p[1], p[3]])
 	typ = symtab.comparate_types(p[1], p[3])
 	p[0].typ = typ
 	if typ == 'error' :
@@ -472,7 +426,12 @@ def p_expre_call(p):
 
 	# TODO:
 	# obtener tipo de la funcion a partir del valor retornado.
-	p[0].typ = ('int', None)
+	typ = symtab.find_type(p[1])
+	try:
+		p[0].typ = (typ[0], p[3].value)
+	except AttributeError:
+		p[0].typ= (typ[0], "unknow")
+		pass
 
 def p_expre_id(p):
 	'expre : ID'
@@ -494,23 +453,17 @@ def p_expre_array(p):
 	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
 
-	# TODO:
-	# discrimar el tipo de dato de ID
+	typ = symtab.find_type(p[1])
 	try:
-		p[0].typ = ("int", p[3].value)
+		p[0].typ = (typ[0], p[3].value)
 	except AttributeError:
-		p[0].typ= ("int", "unknow")
+		p[0].typ= (typ[0], "unknow")
 		pass
 
-	#indices enteros
-	# if hasattr(p[3],'typ') & hasattr(p[3],'value'):
-	# 		if p[3].typ != 'int_type':
-	# 			print ("#Error# El indice del array debe ser un valor entero '%s'" % f.name)
-	# 		else:
-	# 			p[0].typ = "int["+str(p[3].value)+"]_type"
-	# else:
-
-	# 	print ("#Error# no se le encuentra valor")
+	# indices enteros
+	if hasattr(p[3],'typ') & hasattr(p[3],'value'):
+		if p[3].typ != 'int':
+			print (">>ERROR:  El indice del array %s debe ser un valor entero" % typ[0])
 	
 
 
