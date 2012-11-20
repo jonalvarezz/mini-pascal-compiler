@@ -1,5 +1,6 @@
-FUN main( arg:INT, arg2:INT[189] )
-x:INT;
+FUN main( arg:INT, arg2:FLOAT )
+a:INT[30+arg];
 BEGIN
-	x := 3.4
+	if arg > 0 and arg2 < 3 then
+		print ( "hellou" )
 END

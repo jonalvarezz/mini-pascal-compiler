@@ -315,10 +315,18 @@ def p_location_2(p):
 def p_relacion_lt(p):
 	'relacion : expre LT expre'
 	p[0] = Node('<',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
 def p_relacion_le(p):
 	'relacion : expre LE expre'
 	p[0] = Node('<=',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
 def p_relacion_gt(p):
 	'relacion : expre GT expre'
@@ -327,14 +335,26 @@ def p_relacion_gt(p):
 def p_relacion_ge(p):
 	'relacion : expre GE expre'
 	p[0] = Node('>=',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
 def p_relacion_eq(p):
 	'relacion : expre EQ expre'
 	p[0] = Node('=',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
 def p_relacion_ne(p):
 	'relacion : expre NE expre'
-	p[0] = Node('!=',[p[1],p[3]])	 
+	p[0] = Node('!=',[p[1],p[3]])
+	typ = symtab.comparate_types(p[1], p[3])
+	p[0].typ = typ
+	if typ == 'error' :
+		print( ">>ERROR: Se esperaban relaciones del mismo tipo.")
 
 def p_relacion_and(p):
 	'relacion : relacion AND relacion'
@@ -369,14 +389,21 @@ def p_type_i(p):
 def p_type_fa(p):
 	'type : FLOAT CORI expre CORD'
 	p[0] = Node('type_float_Array', [p[3]])
-
-	p[0].typ= ("float", p[3].value)
+	try:
+		p[0].typ= ("float", p[3].value)
+	except AttributeError:
+		p[0].typ= ("float", "unknow")
+		pass
 
 
 def p_type_ia(p):
 	'type : INT CORI expre CORD'
 	p[0] = Node('type_int_Array', [p[3]])
-	p[0].typ= ("int", p[3].value)
+	try:
+		p[0].typ= ("int", p[3].value)
+	except AttributeError:
+		p[0].typ= ("int", "unknow")
+		pass
 
 #  ---------------------------------------------------------------
 #  EXPRLIST
@@ -469,7 +496,11 @@ def p_expre_array(p):
 
 	# TODO:
 	# discrimar el tipo de dato de ID
-	p[0].typ = ("int", p[3].value)
+	try:
+		p[0].typ = ("int", p[3].value)
+	except AttributeError:
+		p[0].typ= ("int", "unknow")
+		pass
 
 	#indices enteros
 	# if hasattr(p[3],'typ') & hasattr(p[3],'value'):

@@ -55,7 +55,7 @@ def t_FNUM(t):
         return t
 
 def t_INUM(t):
-    r'[0-9]+[^a-zA-Z_\-;\:\)\]\,]?'
+    r'[0-9]+[^a-zA-Z_\-\/\+\*\;\:\)\]\,]?'
     try :
         t.value = int(t.value)
     except ValueError:
