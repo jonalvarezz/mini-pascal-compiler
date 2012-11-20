@@ -34,7 +34,10 @@ def dump_tree(node, indent = ""):
 	if not hasattr(node, "typ"):
 		datatype = ""
 	else:
-		datatype = node.typ
+		if node.typ[1] :
+			datatype = str(node.typ[0]) + "_" + str(node.typ[1])
+		else:
+			datatype = node.typ[0]
 	try:
 		if not node.leaf:
 			print ("%s %s  %s" % (indent, node.name, datatype))
@@ -77,7 +80,7 @@ def p_programa_0(p):
 
 #  ---------------------------------------------------------------
 #  LISTA DE FUNCIONES
-#  ---------------------------------------------------------------
+#  ------------------------------------------newtype('int')---------------------
 
 def p_funcionlista_1(p):
 	'''funcionlista : funcion'''
@@ -294,7 +297,7 @@ def p_location_2(p):
 
 	# Solo se esperan numeros enteros
 	if hasattr(p[3],'typ'):
-		if p[3].typ != 'int':
+		if p[3].typ[0] != 'int':
 			print ("#Error# El indice de un vector %s debe ser entero." % p[1])
 		else:
 			p[0].typ = p[3].typ
@@ -356,24 +359,24 @@ def p_relacion_parent(p):
 def p_type_f(p):
 	'type : FLOAT'
 	p[0] = Node('type_float',[], p[1])
-	p[0].typ = "float"
+	p[0].typ = ("float", None)
 
 def p_type_i(p):
 	'type : INT'
 	p[0] = Node('type_int',[],p[1])
-	p[0].typ = "int"
+	p[0].typ = ("int", None)
 
 def p_type_fa(p):
 	'type : FLOAT CORI expre CORD'
 	p[0] = Node('type_float_Array', [p[3]])
 
-	p[0].typ= "float[" + str(p[3].value) + "]"
+	p[0].typ= ("float", p[3].value)
 
 
 def p_type_ia(p):
 	'type : INT CORI expre CORD'
 	p[0] = Node('type_int_Array', [p[3]])
-	p[0].typ= "int[" + str(p[3].value) + "]"
+	p[0].typ= ("int", p[3].value)
 
 #  ---------------------------------------------------------------
 #  EXPRLIST
@@ -439,7 +442,10 @@ def p_expre_masu(p):
 def p_expre_call(p):
 	'expre : ID PARI exprelist PARD'
 	p[0] = Node( 'call', [p[3]], p[1] )
-	p[0].typ = 'int'
+
+	# TODO:
+	# obtener tipo de la funcion a partir del valor retornado.
+	p[0].typ = ('int', None)
 
 def p_expre_id(p):
 	'expre : ID'
@@ -460,7 +466,10 @@ def p_expre_id(p):
 def p_expre_array(p):
 	'expre : ID CORI expre CORD'
 	p[0] = Node('array',[p[3]],p[1])
-	p[0].typ = "int["+str(p[3].value)+"]"
+
+	# TODO:
+	# discrimar el tipo de dato de ID
+	p[0].typ = ("int", p[3].value)
 
 	#indices enteros
 	# if hasattr(p[3],'typ') & hasattr(p[3],'value'):
@@ -478,26 +487,26 @@ def p_expre_fnum(p):
 	'expre : FNUM'
 	p[0]= Node('numero_f',[], p[1])
 	p[0].value = p[1]
-	p[0].typ = "float"
+	p[0].typ = ("float", None)
 
 def p_expre_inum(p):
 	'expre : INUM'
 	p[0]= Node('numero',[],p[1])
 	p[0].value = p[1]
-	p[0].typ = "int"
+	p[0].typ = ("int", None)
 
 def p_expre_cast_int(p):
 	'expre : INT PARI expre PARD'
 	p[0] = Node('cast_int',[p[3]],p[1])
 	p[0].value = p[3].value
-	p[0].typ = "int"
+	p[0].typ = ("int", None)
 
 
 def p_expre_cast_float(p):
 	'expre : FLOAT PARI expre PARD'
 	p[0] = Node('cast_float',[p[3]],p[1])
 	p[0].value = p[3].value
-	p[0].typ = "float"
+	p[0].typ = ("float", None)
 
 
 # -----------------------------------------------------------------------------

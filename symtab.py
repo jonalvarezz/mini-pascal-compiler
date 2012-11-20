@@ -111,7 +111,7 @@ def setid( name, typ=None ) :
     
     if not hasattr(sname,'typ') :
         sname.clase = 'id'
-        sname.typ=typ
+        sname.typ = typ
         current[name].numpar = sname
 
         return True
@@ -164,7 +164,7 @@ def get_scopes():
 
 def comparate_types( n1, n2 ) :
     if hasattr(n1, 'typ') and hasattr(n2, 'typ'):    
-        if n1.typ == n2.typ :
+        if n1.typ[0] == n2.typ[0] :
             return n1.typ
         else :
             return 'error'
