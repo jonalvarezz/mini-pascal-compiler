@@ -1,7 +1,7 @@
 FUN prueva( r:INT)
 i:INT;
 BEGIN
-    i := 0 / n;
+    	i := 0 / n;
 	PRINT(" los numeors");
 	WHILE i < n DO
 	 BEGIN

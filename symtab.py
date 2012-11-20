@@ -102,7 +102,9 @@ def find_id( name ) :
 
 def find_type( name ) :
     data = current.get( name, False )
-    return data.typ
+    if hasattr( data, 'typ' ) :
+        return data.typ
+    return ("Error", None)
 
 #..........................................................................
 

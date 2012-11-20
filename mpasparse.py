@@ -230,7 +230,7 @@ def p_linea_4(p):
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
 	if not data :
-		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+		print ( ">>ERROR: identificador '%s' no declarada." % p[1] )
 
 	# Comprobacion asignacion de tipo
 	p1 = symtab.get_id( p[1] )
@@ -288,7 +288,7 @@ def p_location_1(p):
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
 	if not data :
-		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+		print ( ">>ERROR: identificador '%s' no declarada." % p[1] )
 
 
 def p_location_2(p):
@@ -312,7 +312,7 @@ def p_location_2(p):
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
 	if not data :
-		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+		print ( ">>ERROR: identificador '%s' no declarada." % p[1] )
 
 
 #  ---------------------------------------------------------------
@@ -424,8 +424,6 @@ def p_expre_call(p):
 	'expre : ID PARI exprelist PARD'
 	p[0] = Node( 'call', [p[3]], p[1] )
 
-	# TODO:
-	# obtener tipo de la funcion a partir del valor retornado.
 	typ = symtab.find_type(p[1])
 	try:
 		p[0].typ = (typ[0], p[3].value)
@@ -441,7 +439,7 @@ def p_expre_id(p):
 	# Validacion id no declarado.
 	data = symtab.find_id( p[1] )
 	if not data :
-		print ( ">>ERROR: Funcion '%s' no declarada." % p[1] )
+		print ( ">>ERROR: identificador '%s' no declarada. Linea" % p[1] )
  
 	# tipo de dato
 	typ = symtab.find_type(p[1])
