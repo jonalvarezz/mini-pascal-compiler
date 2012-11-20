@@ -408,7 +408,7 @@ def p_expre(p):
 	typ = symtab.comparate_types(p[1], p[3])
 	p[0].typ = typ
 	if typ == 'error' :
-		print( ">>ERROR: Se esperaban expresiones del mismo tipo. linea: %i", p.lineno)
+		print( ">>ERROR: Se esperaban expresiones del mismo tipo.")
  
 def p_expre_menosu(p):
 	'expre : MENOS expre'

@@ -9,7 +9,6 @@ class ExprType(object):
 		self.un_ops = un_ops
 
 
-
 int_type = ExprType("int",
 	set(('MAS', 'MENOS', 'MUL', 'DIV',
 		 'LE', 'LT', 'EQ', 'NE', 'GT', 'GE')),
