@@ -47,13 +47,21 @@ t_ASIG = r'\:='
 
 def t_FNUM(t):
     r'((\d*\.\d+)(E|e[\+-]?\d+)?|([1-9]\d*E|e[\+-]?\d+))'
-    t.value = float(t.value)
-    return t
+    try :
+        t.value = float(t.value)
+    except ValueError:
+        print ( "Numero mal formado. Error de Valor. linea %s" % t.lineno )
+    else:
+        return t
 
 def t_INUM(t):
     r'[0-9]+[^a-zA-Z_\-;\:\)\]\,]?'
-    t.value = int(t.value)
-    return t
+    try :
+        t.value = int(t.value)
+    except ValueError:
+        print ( "Numero mal formado. Error de Valor. linea %s" % t.lineno )
+    else:
+        return t
 
 def t_error_ID(t):
     r'\d+[a-zA-Z_]*'
