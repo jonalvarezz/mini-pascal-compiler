@@ -526,7 +526,7 @@ def parse(data):
 	parser = yacc.yacc(debug=True,errorlog=log)
 	try :
    		res = parser.parse(data)
-   		dump_tree( res )
+   		#dump_tree( res )
 	except EOFError:
    		print( "Archivo no encontrado" )
    	return res

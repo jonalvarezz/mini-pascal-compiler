@@ -11,7 +11,9 @@ data = f.read()
 f.close()
 
 top = mpasparse.parse(data)
-print top
+mpasparse.dump_tree( top )
+
+
 if top:
     outf = open(outname,"w")
     mpasgen.generate(outf,top)
