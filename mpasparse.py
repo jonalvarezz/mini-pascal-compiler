@@ -517,12 +517,18 @@ logging.basicConfig(
 
 log = logging.getLogger()
 
-parser = yacc.yacc(debug=True,errorlog=log)
 
-try :
-   f = open(sys.argv[1])
-   res = parser.parse(f.read())
-   f.close()
-   dump_tree( res )
-except EOFError:
-   print( "Archivo no encontrado" )
+#parser()
+
+
+
+def parse(data):
+	parser = yacc.yacc(debug=True,errorlog=log)
+	try :
+   		res = parser.parse(data)
+   		dump_tree( res )
+	except EOFError:
+   		print( "Archivo no encontrado" )
+   	return res
+	
+
