@@ -119,8 +119,8 @@ END
 ```
 
 #Autores
-Jonathan Alvarez Gonzalez @jonaAlvarezG
-Daniel Bernal @tamarindoDN
+* Jonathan Alvarez Gonzalez @jonalvarezz
+* Daniel Bernal @tamarindoDN
 
 **Universidad Tecnológica de Pereira**
 Ingieria en Sistemas y Computación
